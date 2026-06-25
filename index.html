@@ -73,7 +73,7 @@
         .btn-secondary { background: #333; border: 1px solid #555; }
         .btn-secondary:hover { background: #444; }
 
-        .difficulty-options {
+        .menu-step {
             display: none;
             flex-direction: column;
             gap: 8px;
@@ -231,33 +231,45 @@
         }
         .promo-choice:hover { border-color: var(--accent); background: #444; }
 
-        /* Game Over Styling PopUp */
         #game-over-title { font-size: 3rem; margin: 0 0 10px 0; color: var(--danger); font-weight: 900; }
         #game-over-reason { font-size: 1.2rem; color: #aaa; margin-bottom: 25px; }
     </style>
 </head>
 <body>
 
+    <!-- SCREEN 1: MENU UTAMA & STRUKTUR SELEKSI -->
     <div id="menu-screen">
         <div class="menu-card">
             <h1>CHESS TYCOON</h1>
             <div class="subtitle">Tactical warfare meets tight resource economics.</div>
             
-            <div id="main-menu-buttons">
-                <button class="btn" onclick="startGameMode('local')">👥 2 Players (Local / 1 Laptop)</button>
-                <button class="btn btn-secondary" onclick="showAiOptions()">🤖 VS Komputer (Bot AI)</button>
+            <!-- Tahap 1: Pilih Mode -->
+            <div id="step-modes">
+                <button class="btn" onclick="selectMode('local')">👥 2 Players (Local / 1 Laptop)</button>
+                <button class="btn btn-secondary" onclick="selectMode('ai')">🤖 VS Komputer (Bot AI)</button>
             </div>
 
-            <div id="ai-options" class="difficulty-options">
-                <p style="margin: 5px 0; font-size: 0.9rem; color: #aaa;">Pilih Tingkat Kesulitan Bot:</p>
-                <button class="btn" style="background:#4bc0c0;" onclick="startGameMode('ai', 'easy')">Easy Bot</button>
-                <button class="btn" style="background:#ff9f40;" onclick="startGameMode('ai', 'normal')">Normal Bot</button>
-                <button class="btn" style="background:#ff6384;" onclick="startGameMode('ai', 'hard')">Hard Bot</button>
-                <button class="btn btn-secondary" style="padding: 6px;" onclick="hideAiOptions()">← Kembali</button>
+            <!-- Tahap 2: Pilih Kubu/Warna -->
+            <div id="step-colors" class="menu-step">
+                <p id="color-title-text" style="margin: 5px 0; font-size: 0.95rem; color: #aaa;">Pilih Warna:</p>
+                <button class="btn" style="background:#ffffff; color:#000;" onclick="selectColor('w')">🏳️ Putih (White)</button>
+                <button class="btn" style="background:#333; color:#fff; border: 1px solid #555;" onclick="selectColor('b')">🏴 Hitam (Black)</button>
+                <button class="btn btn-secondary" id="btn-random-color" onclick="selectColor('random')">🎲 Random (Acak)</button>
+                <button class="btn btn-secondary" style="padding: 6px; margin-top: 10px;" onclick="backToModes()">← Kembali</button>
+            </div>
+
+            <!-- Tahap 3: Pilih Tingkat Kesulitan AI -->
+            <div id="step-difficulties" class="menu-step">
+                <p style="margin: 5px 0; font-size: 0.95rem; color: #aaa;">Pilih Tingkat Kesulitan Bot:</p>
+                <button class="btn" style="background:#4bc0c0;" onclick="finalizeAiStart('easy')">Easy Bot</button>
+                <button class="btn" style="background:#ff9f40;" onclick="finalizeAiStart('normal')">Normal Bot</button>
+                <button class="btn" style="background:#ff6384;" onclick="finalizeAiStart('hard')">Hard Bot</button>
+                <button class="btn btn-secondary" style="padding: 6px; margin-top: 10px;" onclick="backToColors()">← Kembali</button>
             </div>
         </div>
     </div>
 
+    <!-- SCREEN 2: GAMEPLAY -->
     <div id="game-screen">
         <div class="header">
             <div>White Bank: <span class="bank" id="bank-w">$5.00</span></div>
@@ -269,14 +281,17 @@
         </div>
 
         <div class="main-content">
+            <!-- Warzone Board -->
             <div class="board-container">
                 <div class="board" id="board"></div>
                 
+                <!-- Promotion Overlay -->
                 <div class="overlay" id="promo-overlay">
                     <h3 style="margin:0;">Promosi Pawn ($1.00 Fee)</h3>
                     <div class="promo-buttons" id="promo-options"></div>
                 </div>
 
+                <!-- Game Over Overlay -->
                 <div class="overlay" id="game-over-overlay">
                     <h1 id="game-over-title">GAME OVER</h1>
                     <div id="game-over-reason">Checkmate!</div>
@@ -284,6 +299,7 @@
                 </div>
             </div>
 
+            <!-- Shop Staging & Graveyard -->
             <div class="side-panel">
                 <div class="panel-section">
                     <h3>The Global Shop (Board 2)</h3>
@@ -296,6 +312,7 @@
             </div>
         </div>
 
+        <!-- Log Teks -->
         <div class="log-panel" id="log-box"></div>
     </div>
 
@@ -311,7 +328,7 @@
     };
 
     const BASE_STOCK = { 'p': 8, 'n': 2, 'b': 2, 'r': 2, 'q': 1 };
-    const TURN_TIME_LIMIT = 30; // Batas timer 30 Detik per langkah
+    const TURN_TIME_LIMIT = 30;
 
     // --- State Sistem Game ---
     let board = Array(8).fill(null).map(() => Array(8).fill(null));
@@ -323,6 +340,10 @@
     let aiDifficulty = 'easy'; 
     let isAiThinking = false;
     let isGameOver = false;
+
+    // Sistem Identitas Warna
+    let humanColor = 'w'; // Default Player 1 / Player Utama
+    let aiColor = null;   // Menyimpan warna Bot AI
 
     // State Timer
     let timeRemaining = TURN_TIME_LIMIT;
@@ -336,18 +357,55 @@
     let pendingPromo = null;
     let stallPlies = 0;
 
-    // --- Pengaturan Menu ---
-    function showAiOptions() {
-        document.getElementById('main-menu-buttons').style.display = 'none';
-        document.getElementById('ai-options').style.display = 'flex';
-    }
-    function hideAiOptions() {
-        document.getElementById('main-menu-buttons').style.display = 'flex';
-        document.getElementById('ai-options').style.display = 'none';
+    // --- Alur Pemilihan Menu (Wizard) ---
+    function selectMode(mode) {
+        gameMode = mode;
+        document.getElementById('step-modes').style.display = 'none';
+        document.getElementById('step-colors').style.display = 'flex';
+        
+        const title = document.getElementById('color-title-text');
+        const randomBtn = document.getElementById('btn-random-color');
+        
+        if (mode === 'local') {
+            title.innerText = "👥 Pilih Warna untuk Player 1:";
+            randomBtn.style.display = 'none'; // Mode lokal tidak membutuhkan acak
+        } else {
+            title.innerText = "🤖 Pilih Warna Anda (VS Bot):";
+            randomBtn.style.display = 'block'; // Sediakan opsi random vs Bot
+        }
     }
 
-    function startGameMode(mode, difficulty = 'easy') {
-        gameMode = mode;
+    function backToModes() {
+        document.getElementById('step-colors').style.display = 'none';
+        document.getElementById('step-modes').style.display = 'flex';
+    }
+
+    function selectColor(chosenColor) {
+        if (chosenColor === 'random') {
+            humanColor = Math.random() < 0.5 ? 'w' : 'b';
+        } else {
+            humanColor = chosenColor;
+        }
+
+        if (gameMode === 'local') {
+            // Mode Lokal langsung memulai game setelah warna dipilih
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            initGame();
+        } else {
+            // Mode AI berlanjut ke pemilihan tingkat kesulitan
+            aiColor = humanColor === 'w' ? 'b' : 'w';
+            document.getElementById('step-colors').style.display = 'none';
+            document.getElementById('step-difficulties').style.display = 'flex';
+        }
+    }
+
+    function backToColors() {
+        document.getElementById('step-difficulties').style.display = 'none';
+        document.getElementById('step-colors').style.display = 'flex';
+    }
+
+    function finalizeAiStart(difficulty) {
         aiDifficulty = difficulty;
         document.getElementById('menu-screen').style.display = 'none';
         document.getElementById('game-screen').style.display = 'flex';
@@ -358,16 +416,28 @@
     function initGame() {
         board = Array(8).fill(null).map(() => Array(8).fill(null));
         isGameOver = false;
+        turn = 'w'; // Putih selalu berjalan pertama sesuai regulasi internasional FIDE
         
         // Taruh Raja di koordinat formal awal
         board[7][4] = { color: 'w', type: 'k', hasMoved: false }; // e1
         board[0][4] = { color: 'b', type: 'k', hasMoved: false }; // e8
         
         log("Game dimulai! Masing-masing mendapatkan dana awal $5.00.");
-        if (gameMode === 'ai') log(`Mode VS Bot AI aktif (${aiDifficulty.toUpperCase()})! Anda memegang White.`);
+        if (gameMode === 'ai') {
+            log(`Anda memegang kubu ${humanColor === 'w' ? 'WHITE (Putih)' : 'BLACK (Hitam)'}.`);
+            log(`Mode VS Bot AI aktif (${aiDifficulty.toUpperCase()})!`);
+        } else {
+            log(`Mode Lokal: Player 1 = ${humanColor === 'w' ? 'White' : 'Black'} | Player 2 = ${humanColor === 'w' ? 'Black' : 'White'}`);
+        }
         
         render();
         startTimer();
+
+        // Jika bot diatur sebagai White, picu gerakan pertamanya seketika!
+        if (gameMode === 'ai' && turn === aiColor) {
+            isAiThinking = true;
+            setTimeout(processAiTurn, 800);
+        }
     }
 
     // --- Manajemen Timer Per Putaran ---
@@ -392,7 +462,7 @@
         const timerBadge = document.getElementById('timer-display');
         timerBadge.innerText = `${timeRemaining}s`;
         if (timeRemaining <= 7) {
-            timerBadge.style.backgroundColor = '#ff1744'; // Berkedip merah saat kritis
+            timerBadge.style.backgroundColor = '#ff1744';
         } else {
             timerBadge.style.backgroundColor = 'var(--danger)';
         }
@@ -400,7 +470,6 @@
 
     function triggerTimeout() {
         if (isGameOver) return;
-        // Pemain yang sedang memegang giliran kalah karena kehabisan waktu
         if (turn === 'w') {
             endGame("KALAH WAKTU!", "WHITE kehabisan waktu! BLACK DINYATAKAN MENANG!");
         } else {
@@ -417,7 +486,7 @@
         if (isGameOver) return;
         turn = turn === 'w' ? 'b' : 'w';
         
-        // Proses cooldown kuburan pemain yang baru saja mendapat giliran
+        // Cooldown kuburan
         let activeGrave = [];
         for (let item of graveyard) {
             if (item.color === turn) item.turnsLeft--;
@@ -433,21 +502,18 @@
         // Aturan Anti-Stall
         stallPlies++;
         if (stallPlies >= 30) {
-            endGame("GAME SERI!", "Stalemate Limit tercapai (15 ronde berturut-turut tanpa progres bidak/pembunuhan).");
+            endGame("GAME SERI!", "Stalemate Limit tercapai (15 ronde berturut-turut tanpa progres).");
             return;
         }
 
-        // Cek kondisi Check / Skakmat / Stalemate
+        // Evaluasi kondisi Checkmate / Stalemate
         let inCheck = isKingInCheck(turn, board);
         let hasActions = playerHasAnyLegalActions(turn);
 
         if (inCheck) {
             if (!hasActions) {
-                if (turn === 'w') {
-                    endGame("CHECKMATE!", "WHITE Terkena Skakmat! BLACK MENANG!");
-                } else {
-                    endGame("CHECKMATE!", "BLACK Terkena Skakmat! WHITE MENANG!");
-                }
+                if (turn === 'w') endGame("CHECKMATE!", "WHITE Terkena Skakmat! BLACK MENANG!");
+                else endGame("CHECKMATE!", "BLACK Terkena Skakmat! WHITE MENANG!");
                 return;
             } else {
                 log(`Raja ${turn === 'w' ? 'White' : 'Black'} Terkena Skak!`, 'log-alert');
@@ -458,12 +524,12 @@
         }
 
         render();
-        startTimer(); // Reset timer untuk giliran berikutnya
+        startTimer();
 
-        // Trigger Bot jika giliran Black dalam mode AI
-        if (gameMode === 'ai' && turn === 'b') {
+        // Trigger Bot jika giliran milik AI
+        if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
-            setTimeout(processAiTurn, 600);
+            setTimeout(processAiTurn, 700);
         }
     }
 
@@ -472,7 +538,7 @@
         if (!isAiThinking || isGameOver) return;
         isAiThinking = false;
 
-        let actions = getAllLegalActions('b');
+        let actions = getAllLegalActions(aiColor);
         if (actions.length === 0) return; 
 
         let chosen = null;
@@ -487,24 +553,19 @@
                     let target = board[act.to.r][act.to.c];
                     
                     if (target) score += PIECES[target.type].price * 12;
-                    
                     if (piece.type === 'k') {
-                        if (banks.b < 1.50) score += 15; 
-                        else if (banks.b > 7.00) score -= 5; 
+                        if (banks[aiColor] < 1.50) score += 15; 
+                        else if (banks[aiColor] > 7.00) score -= 5; 
                     }
-                    
                     if (piece.type === 'p') score += 1.5;
 
-                    if (aiDifficulty === 'hard' && isSquareAttackedBy('w', act.to.r, act.to.c, board)) {
+                    if (aiDifficulty === 'hard' && isSquareAttackedBy(humanColor, act.to.r, act.to.c, board)) {
                         score -= PIECES[piece.type].price * 8;
                     }
                 } else if (act.type === 'buy') {
                     score += PIECES[act.pieceType].price * 2;
-                    
-                    let remnants = banks.b - PIECES[act.pieceType].price;
-                    if (remnants <= 0.01) {
-                        score -= (aiDifficulty === 'hard') ? 40 : 15;
-                    }
+                    let remnants = banks[aiColor] - PIECES[act.pieceType].price;
+                    if (remnants <= 0.01) score -= (aiDifficulty === 'hard') ? 40 : 15;
                 }
                 act.score = score;
             });
@@ -526,7 +587,6 @@
         }
     }
 
-    // Mengumpulkan seluruh pergerakan + pembelian legal untuk Bot AI
     function getAllLegalActions(color) {
         let list = [];
         for (let r=0; r<8; r++) {
@@ -563,7 +623,7 @@
     // --- Logika Pemrosesan Klik User ---
     function handleSquareClick(r, c) {
         if (isGameOver) return;
-        if (gameMode === 'ai' && turn === 'b') return; 
+        if (gameMode === 'ai' && turn === aiColor) return; 
 
         if (selectedShopType) {
             let found = validSpawns.find(s => s.r === r && s.c === c);
@@ -613,7 +673,7 @@
 
     function selectShopItem(type) {
         if (isGameOver) return;
-        if (gameMode === 'ai' && turn === 'b') return;
+        if (gameMode === 'ai' && turn === aiColor) return;
         if (inventory[turn][type] <= 0 || banks[turn] < PIECES[type].price) return;
 
         if (selectedShopType === type) {
@@ -647,7 +707,7 @@
         banks[turn] -= cost;
         
         if (cost < 0) {
-            log(`${turn === 'w' ? 'White' : 'Black'} menggerakkan Raja (Pendapatan Ekonomi +$1.00)`);
+            log(`${turn === 'w' ? 'White' : 'Black'} menggerakkan Raja (Ekonomi +$1.00)`);
         } else {
             log(`${turn === 'w' ? 'White' : 'Black'} menggerakkan ${PIECES[p.type].name} ke ${getCoordName(tr,tc)} (-$${cost.toFixed(2)})`);
         }
@@ -655,8 +715,7 @@
         if (victim) {
             let bounty = PIECES[victim.type].price;
             banks[turn] += bounty;
-            log(`Bounty Diklaim! Berhasil memakan ${PIECES[victim.type].name} (+$${bounty.toFixed(2)})`, 'log-alert');
-            
+            log(`Bounty! Memakan ${PIECES[victim.type].name} (+$${bounty.toFixed(2)})`, 'log-alert');
             graveyard.push({ color: victim.color, type: victim.type, turnsLeft: 3 });
             stallPlies = 0;
         }
@@ -668,12 +727,12 @@
         p.hasMoved = true;
 
         if (p.type === 'p' && (tr === 0 || tr === 7)) {
-            if (gameMode === 'ai' && turn === 'b') {
+            if (gameMode === 'ai' && turn === aiColor) {
                 let choice = 'q';
-                if (inventory['b']['q'] <= 0 && !graveyard.some(g=>g.color==='b'&&g.type==='q')) choice = 'r';
+                if (inventory[aiColor]['q'] <= 0 && !graveyard.some(g=>g.color===aiColor&&g.type==='q')) choice = 'r';
                 processPromotion(choice, tr, tc);
             } else {
-                clearInterval(timerIntervalId); // Pause timer sementara memilih promosi
+                clearInterval(timerIntervalId); 
                 pendingPromo = { r: tr, c: tc };
                 openPromoUI();
                 return; 
@@ -707,7 +766,7 @@
 
     function processPromotion(type, r, c) {
         banks[turn] -= 1.00; 
-        log(`Pawn ${turn.toUpperCase()} berhasil promosi menjadi ${PIECES[type].name} (-$1.00 Fee)`, 'log-alert');
+        log(`Pawn ${turn.toUpperCase()} promosi menjadi ${PIECES[type].name} (-$1.00 Fee)`, 'log-alert');
 
         if (inventory[turn][type] > 0) {
             inventory[turn][type]--;
@@ -721,7 +780,7 @@
         switchTurn();
     }
 
-    // --- Generator Aturan Gerak Catur Dasar ---
+    // --- Aturan Gerak Dasar ---
     function getPseudoMoves(r, c, b) {
         let p = b[r][c];
         let list = [];
@@ -753,7 +812,7 @@
             if (p.type !== 'r') vectors.push([-1,-1],[-1,1],[1,-1],[1,1]);
             vectors.forEach(v => {
                 let tr = r + v[0], tc = c + v[1];
-                while (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
+                while (tr >= 0 && tr < 8 && tc >= 8 ? false : tc >= 0) {
                     if (!b[tr][tc]) { list.push({r: tr, c: tc}); }
                     else {
                         if (b[tr][tc].color !== p.color) list.push({r: tr, c: tc});
@@ -784,14 +843,11 @@
         return raw.filter(s => !board[s.r][s.c] && !buyLeavesKingInCheck(type, s.r, s.c, color, board));
     }
 
-    // --- Aturan Proteksi Validasi Raja (Cek / Skak) ---
     function isKingInCheck(color, b) {
         let kr = -1, kc = -1;
         for (let r=0; r<8; r++) {
             for (let c=0; c<8; c++) {
-                if (b[r][c] && b[r][c].type === 'k' && b[r][c].color === color) {
-                    kr = r; kc = c; break;
-                }
+                if (b[r][c] && b[r][c].type === 'k' && b[r][c].color === color) { kr = r; kc = c; break; }
             }
         }
         if (kr === -1) return false;
@@ -810,7 +866,6 @@
         return false;
     }
 
-    // Simulasi untuk mencegah pergerakan bunuh diri
     function moveLeavesKingInCheck(fr, fc, tr, tc, color, b) {
         let nextB = b.map(row => [...row]);
         nextB[tr][tc] = nextB[fr][fc];
@@ -840,11 +895,16 @@
             return;
         }
 
-        if (gameMode === 'ai' && turn === 'b') {
+        if (gameMode === 'ai' && turn === aiColor) {
             label.innerText = `Bot AI Berpikir...`;
             label.style.color = '#ff9f40';
         } else {
-            label.innerText = turn === 'w' ? "Giliran White" : "Giliran Black";
+            if (gameMode === 'local') {
+                let isP1 = turn === humanColor;
+                label.innerText = isP1 ? "Giliran Player 1" : "Giliran Player 2";
+            } else {
+                label.innerText = "Giliran Anda";
+            }
             label.style.color = turn === 'w' ? '#ffffff' : '#aaaaaa';
         }
     }
@@ -853,8 +913,19 @@
         const area = document.getElementById('board');
         area.innerHTML = '';
 
-        for (let r=0; r<8; r++) {
-            for (let c=0; c<8; c++) {
+        // BALIK PAPAN: Jika user bermain sebagai HITAM, balik urutan agar Hitam berada di posisi bawah
+        let rowOrder = [];
+        let colOrder = [];
+        if (humanColor === 'b') {
+            for (let r=0; r<8; r++) rowOrder.push(r);     // Baris 0 (Hitam) di urutan paling bawah layar
+            for (let c=7; c>=0; c--) colOrder.push(c);     // Sisi kanan-kiri dibalik (File h ke a)
+        } else {
+            for (let r=7; r>=0; r--) rowOrder.push(r);     // Baris 7 (Putih) di urutan paling bawah layar
+            for (let c=0; c<8; c++) colOrder.push(c);      // Sisi normal (File a ke h)
+        }
+
+        for (let r of rowOrder) {
+            for (let c of colOrder) {
                 let sq = document.createElement('div');
                 sq.className = `square ${(r+c)%2 === 0 ? 'light' : 'dark'}`;
 
@@ -926,11 +997,11 @@
         box.prepend(div);
     }
 
+    // Penamaan petak koordinat dinamis & akurat
     function getCoordName(r, c) {
         return `${String.fromCharCode(97 + c)}${8 - r}`;
     }
 
-    // --- Pemutus Hasil Game Over Mutlak ---
     function endGame(titleText, reasonText) {
         isGameOver = true;
         clearInterval(timerIntervalId);
