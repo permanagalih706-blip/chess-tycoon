@@ -6,8 +6,8 @@
     <title>Chess Tycoon Pro - Tournament Edition</title>
     <style>
         :root {
-            --light-sq: #eeeed2;
-            --dark-sq: #769656;
+            --light-sq: #f0d9b5; /* Krem kayu terang */
+            --dark-sq: #b58863;  /* Cokelat kayu hangat */
             --bg: #121212;
             --text: #ffffff;
             --panel: #1e1e1e;
@@ -21,13 +21,39 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             user-select: none;
         }
+
+        /* Tombol Pilihan Bahasa */
+        .lang-selector {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 1010;
+        }
+        .lang-btn {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .lang-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .lang-btn:hover { background: #444; }
 
         /* Menu Utama / Start Screen */
         #menu-screen {
@@ -40,20 +66,22 @@
             align-items: center;
             z-index: 1000;
             gap: 20px;
+            padding: 20px;
         }
 
         .menu-card {
             background: var(--panel);
-            padding: 40px;
+            padding: 40px 20px;
             border-radius: 12px;
             border: 1px solid var(--border);
             text-align: center;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
             max-width: 400px;
             width: 100%;
+            box-sizing: border-box;
         }
 
-        h1 { margin: 0 0 10px 0; color: var(--accent); font-size: 2.5rem; }
+        h1 { margin: 0 0 10px 0; color: var(--accent); font-size: clamp(2rem, 8vw, 2.5rem); }
         .subtitle { color: #888; margin-bottom: 30px; font-size: 0.95rem; }
 
         .btn {
@@ -68,6 +96,7 @@
             width: 100%;
             margin-bottom: 12px;
             transition: background 0.2s;
+            box-sizing: border-box;
         }
         .btn:hover { background: #45a049; }
         .btn-secondary { background: #333; border: 1px solid #555; }
@@ -90,15 +119,19 @@
         }
 
         .header {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
             background: var(--panel);
-            padding: 15px 25px;
+            padding: 15px;
             border-radius: 8px;
             border: 1px solid var(--border);
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            gap: 10px;
+            text-align: center;
         }
+        .header > div { flex: 1; min-width: 120px; }
         .bank { font-weight: bold; color: var(--accent); }
         
         .center-status {
@@ -107,7 +140,7 @@
             align-items: center;
             gap: 5px;
         }
-        .turn-indicator { font-size: 1.4rem; font-weight: bold; }
+        .turn-indicator { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: bold; }
         .timer-badge {
             background: var(--danger);
             color: white;
@@ -118,49 +151,89 @@
             font-family: monospace;
             min-width: 60px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
         }
+        .btn-pause-sm {
+            background: rgba(0,0,0,0.3);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+        .btn-pause-sm:hover { background: rgba(0,0,0,0.6); }
 
         .main-content {
             display: flex;
+            flex-direction: column;
             gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
+            align-items: center;
         }
 
-        /* Papan Catur */
-        .board-container { position: relative; }
+        /* Responsif untuk Layar Besar */
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+            }
+            .header { padding: 15px 25px; }
+        }
+
+        /* Papan Catur Responsif */
+        .board-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 500px;
+        }
         .board {
             display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
             border: 4px solid var(--panel);
             border-radius: 6px;
             overflow: hidden;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            box-sizing: border-box;
         }
         .square {
-            width: 60px;
-            height: 60px;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 42px;
+            font-size: clamp(20px, 8vw, 45px);
             cursor: pointer;
             position: relative;
         }
-        .light { background-color: var(--light-sq); color: #000; }
-        .dark { background-color: var(--dark-sq); color: #000; }
+        .light { background-color: var(--light-sq); }
+        .dark { background-color: var(--dark-sq); }
 
         /* Highlights */
         .selected { outline: 4px solid #ffeb3b; outline-offset: -4px; z-index: 5; }
-        .valid-move::after {
-            content: ''; width: 18px; height: 18px;
-            border-radius: 50%; background: rgba(0, 0, 0, 0.25);
+        
+        /* KUSTOMISASI TITIK LANGKAH (VALID MOVE) */
+        .light.valid-move::after {
+            content: ''; width: 26%; height: 26%;
+            border-radius: 50%; background: #ffffff; /* Titik Putih di Kotak Terang */
+            position: absolute;
+            box-shadow: 0 0 2px rgba(0,0,0,0.2);
+        }
+        .dark.valid-move::after {
+            content: ''; width: 26%; height: 26%;
+            border-radius: 50%; background: #555555; /* Titik Abu-abu Gelap di Kotak Hitam */
             position: absolute;
         }
+
         .valid-capture::after {
-            content: ''; width: 48px; height: 48px;
-            border-radius: 50%; border: 5px solid rgba(244, 67, 54, 0.5);
+            content: ''; width: 80%; height: 80%;
+            border-radius: 50%; border: 4px solid rgba(244, 67, 54, 0.7);
             position: absolute;
+            box-sizing: border-box;
         }
         .valid-spawn { background-color: rgba(76, 175, 80, 0.4) !important; }
 
@@ -170,7 +243,9 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 15px;
-            width: 300px;
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -212,11 +287,12 @@
             background: var(--panel); border: 1px solid var(--border);
             border-radius: 8px; padding: 12px; height: 100px;
             overflow-y: auto; font-family: monospace; font-size: 0.85rem; color: #ccc;
+            width: 100%; box-sizing: border-box;
         }
         .log-entry { margin-bottom: 4px; }
         .log-alert { color: #ffeb3b; font-weight: bold; }
 
-        /* Overlays */
+        /* Overlays (Modal) */
         .overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.9); display: none;
@@ -224,113 +300,226 @@
             z-index: 100; border-radius: 6px;
             text-align: center; padding: 20px;
         }
-        .promo-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .overlay-fullscreen { position: fixed; border-radius: 0; z-index: 2000; }
+        
+        .promo-buttons { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; justify-content: center; }
         .promo-choice {
             background: #333; border: 2px solid #555; color: white;
             font-size: 36px; padding: 10px 20px; border-radius: 6px; cursor: pointer;
         }
         .promo-choice:hover { border-color: var(--accent); background: #444; }
 
-        #game-over-title { font-size: 3rem; margin: 0 0 10px 0; color: var(--danger); font-weight: 900; }
+        #game-over-title, #pause-title { font-size: clamp(2rem, 8vw, 3rem); margin: 0 0 10px 0; font-weight: 900; }
+        #game-over-title { color: var(--danger); }
+        #pause-title { color: var(--accent); }
         #game-over-reason { font-size: 1.2rem; color: #aaa; margin-bottom: 25px; }
+
+        /* CSS Bidak */
+        .piece-w {
+            color: #ffffff;
+            text-shadow: 0 0 2px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        .piece-b {
+            color: #000000;
+            text-shadow: 0 0 2px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: MENU UTAMA & STRUKTUR SELEKSI -->
     <div id="menu-screen">
+        <div class="lang-selector">
+            <button id="lang-id" class="lang-btn active" onclick="setLanguage('id')">ID</button>
+            <button id="lang-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+
         <div class="menu-card">
             <h1>CHESS TYCOON</h1>
             <div class="subtitle">Tactical warfare meets tight resource economics.</div>
             
-            <!-- Tahap 1: Pilih Mode -->
             <div id="step-modes">
-                <button class="btn" onclick="selectMode('local')">👥 2 Players (Local / 1 Laptop)</button>
-                <button class="btn btn-secondary" onclick="selectMode('ai')">🤖 VS Komputer (Bot AI)</button>
+                <button class="btn" id="btn-local" onclick="selectMode('local')">👥 2 Players (Lokal / 1 HP)</button>
+                <button class="btn btn-secondary" id="btn-ai" onclick="selectMode('ai')">🤖 VS Komputer (Bot AI)</button>
             </div>
 
-            <!-- Tahap 2: Pilih Kubu/Warna -->
             <div id="step-colors" class="menu-step">
                 <p id="color-title-text" style="margin: 5px 0; font-size: 0.95rem; color: #aaa;">Pilih Warna:</p>
-                <button class="btn" style="background:#ffffff; color:#000;" onclick="selectColor('w')">🏳️ Putih (White)</button>
-                <button class="btn" style="background:#333; color:#fff; border: 1px solid #555;" onclick="selectColor('b')">🏴 Hitam (Black)</button>
+                <button class="btn" id="btn-white" style="background:#ffffff; color:#000;" onclick="selectColor('w')">🏳️ Putih (White)</button>
+                <button class="btn" id="btn-black" style="background:#333; color:#fff; border: 1px solid #555;" onclick="selectColor('b')">🏴 Hitam (Black)</button>
                 <button class="btn btn-secondary" id="btn-random-color" onclick="selectColor('random')">🎲 Random (Acak)</button>
-                <button class="btn btn-secondary" style="padding: 6px; margin-top: 10px;" onclick="backToModes()">← Kembali</button>
+                <button class="btn btn-secondary" id="btn-back-modes" style="padding: 6px; margin-top: 10px;" onclick="backToModes()">← Kembali</button>
             </div>
 
-            <!-- Tahap 3: Pilih Tingkat Kesulitan AI -->
             <div id="step-difficulties" class="menu-step">
-                <p style="margin: 5px 0; font-size: 0.95rem; color: #aaa;">Pilih Tingkat Kesulitan Bot:</p>
+                <p id="text-difficulty" style="margin: 5px 0; font-size: 0.95rem; color: #aaa;">Pilih Tingkat Kesulitan Bot:</p>
                 <button class="btn" style="background:#4bc0c0;" onclick="finalizeAiStart('easy')">Easy Bot</button>
                 <button class="btn" style="background:#ff9f40;" onclick="finalizeAiStart('normal')">Normal Bot</button>
                 <button class="btn" style="background:#ff6384;" onclick="finalizeAiStart('hard')">Hard Bot</button>
-                <button class="btn btn-secondary" style="padding: 6px; margin-top: 10px;" onclick="backToColors()">← Kembali</button>
+                <button class="btn btn-secondary" id="btn-back-colors" style="padding: 6px; margin-top: 10px;" onclick="backToColors()">← Kembali</button>
             </div>
         </div>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY -->
+    <!-- Layar Pause -->
+    <div class="overlay overlay-fullscreen" id="pause-overlay">
+        <h1 id="pause-title">DIPAUSE</h1>
+        <div style="max-width: 300px; width: 100%;">
+            <button class="btn" id="btn-resume" onclick="togglePause()">Lanjutkan Permainan</button>
+            <button class="btn btn-secondary" id="btn-main-menu" onclick="location.reload()">Ke Main Menu (Restart)</button>
+        </div>
+    </div>
+
     <div id="game-screen">
         <div class="header">
-            <div>White Bank: <span class="bank" id="bank-w">$5.00</span></div>
+            <div><span id="label-bank-w">White Bank</span>: <br><span class="bank" id="bank-w">$5.00</span></div>
             <div class="center-status">
                 <div class="turn-indicator" id="turn-display">White's Turn</div>
-                <div class="timer-badge" id="timer-display">30s</div>
+                <div class="timer-badge">
+                    <span id="timer-display">30s</span>
+                    <button class="btn-pause-sm" onclick="togglePause()" title="Pause">⏸</button>
+                </div>
             </div>
-            <div>Black Bank: <span class="bank" id="bank-b">$5.00</span></div>
+            <div><span id="label-bank-b">Black Bank</span>: <br><span class="bank" id="bank-b">$5.00</span></div>
         </div>
 
         <div class="main-content">
-            <!-- Warzone Board -->
             <div class="board-container">
                 <div class="board" id="board"></div>
                 
-                <!-- Promotion Overlay -->
                 <div class="overlay" id="promo-overlay">
-                    <h3 style="margin:0;">Promosi Pawn ($1.00 Fee)</h3>
+                    <h3 id="text-promo-title" style="margin:0;">Promosi Pawn ($1.00 Fee)</h3>
                     <div class="promo-buttons" id="promo-options"></div>
                 </div>
 
-                <!-- Game Over Overlay -->
                 <div class="overlay" id="game-over-overlay">
                     <h1 id="game-over-title">GAME OVER</h1>
                     <div id="game-over-reason">Checkmate!</div>
-                    <button class="btn" style="width:auto; padding: 12px 40px;" onclick="location.reload()">Main Lagi</button>
+                    <button class="btn" id="btn-restart" style="width:auto; padding: 12px 40px;" onclick="location.reload()">Main Lagi</button>
                 </div>
             </div>
 
-            <!-- Shop Staging & Graveyard -->
             <div class="side-panel">
                 <div class="panel-section">
-                    <h3>The Global Shop (Board 2)</h3>
+                    <h3 id="text-shop-title">The Global Shop (Board 2)</h3>
                     <div class="shop-grid" id="shop-items"></div>
                 </div>
                 <div class="panel-section">
-                    <h3>Graveyard Cooldown</h3>
+                    <h3 id="text-graveyard-title">Graveyard Cooldown</h3>
                     <div class="graveyard-list" id="graveyard-list"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Log Teks -->
         <div class="log-panel" id="log-box"></div>
     </div>
 
 <script>
-    // --- Data Referensi Unit ---
     const PIECES = {
-        'p': { sym_w: '♙', sym_b: '♟', price: 1.00, move: 0.10, name: 'Pawn' },
-        'n': { sym_w: '♞', sym_b: '♞', price: 3.00, move: 0.30, name: 'Knight' }, 
-        'b': { sym_w: '♗', sym_b: '♝', price: 3.00, move: 0.30, name: 'Bishop' },
-        'r': { sym_w: '♖', sym_b: '♜', price: 5.00, move: 0.50, name: 'Rook' },
-        'q': { sym_w: '♕', sym_b: '♛', price: 9.00, move: 0.90, name: 'Queen' },
-        'k': { sym_w: '♔', sym_b: '♚', price: 0.00, move: -1.00, name: 'King' } 
+        'p': { sym: '♟', price: 1.00, move: 0.10 },
+        'n': { sym: '♞', price: 3.00, move: 0.30 }, 
+        'b': { sym: '♝', price: 3.00, move: 0.30 },
+        'r': { sym: '♜', price: 5.00, move: 0.50 },
+        'q': { sym: '♛', price: 9.00, move: 0.90 },
+        'k': { sym: '♚', price: 0.00, move: -1.00 } 
     };
 
+    const STRINGS = {
+        id: {
+            subtitle: "Pertempuran taktis bertemu ekonomi sumber daya yang ketat.",
+            modeLocal: "👥 2 Pemain (Lokal / 1 HP)",
+            modeAi: "🤖 VS Komputer (Bot AI)",
+            chooseColorP1: "👥 Pilih Warna untuk Player 1:",
+            chooseColorVs: "🤖 Pilih Warna Anda (VS Bot):",
+            white: "🏳️ Putih (White)",
+            black: "🏴 Hitam (Black)",
+            random: "🎲 Acak (Random)",
+            back: "← Kembali",
+            chooseDifficulty: "Pilih Tingkat Kesulitan Bot:",
+            shopTitle: "Toko Global (Papan 2)",
+            graveyardTitle: "Cooldown Kuburan",
+            promoTitle: "Promosi Pion (Biaya $1.00)",
+            whiteBank: "Dana Putih",
+            blackBank: "Dana Hitam",
+            gameStarted: "Game dimulai! Masing-masing mendapatkan dana awal $5.00.",
+            youHold: "Anda memegang kubu",
+            modeAiActive: "Mode VS Bot AI aktif",
+            modeLocalActive: "Mode Lokal: Player 1 = {p1} | Player 2 = {p2}",
+            timeoutTitle: "KALAH WAKTU!",
+            timeoutWhite: "WHITE kehabisan waktu! BLACK DINYATAKAN MENANG!",
+            timeoutBot: "BOT AI kehabisan waktu berpikir! WHITE MENANG!",
+            timeoutBlack: "BLACK kehabisan waktu! WHITE DINYATAKAN MENANG!",
+            stalemateLimit: "Stalemate Limit tercapai (15 ronde berturut-turut tanpa progres).",
+            checkmateTitle: "CHECKMATE!",
+            checkmateWhite: "WHITE Terkena Skakmat! BLACK MENANG!",
+            checkmateBlack: "BLACK Terkena Skakmat! WHITE MENANG!",
+            kingInCheck: "Raja {color} Terkena Skak!",
+            noLegalActions: "Tidak ada langkah legal tersisa untuk dijalankan.",
+            buyLog: "{color} membeli {name} di {coord} (-${price})",
+            moveKingLog: "{color} menggerakkan Raja (Ekonomi +$1.00)",
+            moveLog: "{color} menggerakkan {name} ke {coord} (-${price})",
+            bountyLog: "Bounty! Memakan {name} (+${price})",
+            promoLog: "Pawn {color} promosi menjadi {name} (-$1.00 Fee)",
+            botThinking: "Bot AI Berpikir...",
+            turnP1: "Giliran Player 1",
+            turnP2: "Giliran Player 2",
+            turnYou: "Giliran Anda",
+            restart: "Main Lagi",
+            pauseTitle: "DIPAUSE",
+            resumeGame: "Lanjutkan Permainan",
+            mainMenu: "Ke Main Menu (Restart)",
+            pieces: { 'p': 'Pion', 'r': 'Benteng', 'n': 'Kuda', 'b': 'Menteri', 'q': 'Ratu', 'k': 'Raja' }
+        },
+        en: {
+            subtitle: "Tactical warfare meets tight resource economics.",
+            modeLocal: "👥 2 Players (Local / 1 Device)",
+            modeAi: "🤖 VS Computer (AI Bot)",
+            chooseColorP1: "👥 Choose Color for Player 1:",
+            chooseColorVs: "🤖 Choose Your Color (VS Bot):",
+            white: "🏳️ White",
+            black: "🏴 Black",
+            random: "🎲 Random",
+            back: "← Back",
+            chooseDifficulty: "Select Bot Difficulty:",
+            shopTitle: "The Global Shop (Board 2)",
+            graveyardTitle: "Graveyard Cooldown",
+            promoTitle: "Pawn Promotion ($1.00 Fee)",
+            whiteBank: "White Bank",
+            blackBank: "Black Bank",
+            gameStarted: "Game started! Each player receives initial funding of $5.00.",
+            youHold: "You are playing as",
+            modeAiActive: "AI Bot mode active",
+            modeLocalActive: "Local Mode: Player 1 = {p1} | Player 2 = {p2}",
+            timeoutTitle: "TIMEOUT!",
+            timeoutWhite: "WHITE ran out of time! BLACK WINS!",
+            timeoutBot: "AI BOT ran out of time! WHITE WINS!",
+            timeoutBlack: "BLACK ran out of time! WHITE WINS!",
+            stalemateLimit: "Stalemate Limit reached (15 consecutive rounds without progress).",
+            checkmateTitle: "CHECKMATE!",
+            checkmateWhite: "WHITE is Checkmated! BLACK WINS!",
+            checkmateBlack: "BLACK is Checkmated! WHITE WINS!",
+            kingInCheck: "{color} King is in Check!",
+            noLegalActions: "No legal actions remaining to execute.",
+            buyLog: "{color} bought {name} at {coord} (-${price})",
+            moveKingLog: "{color} moved King (Economy +$1.00)",
+            moveLog: "{color} moved {name} to {coord} (-${price})",
+            bountyLog: "Bounty! Captured {name} (+${price})",
+            promoLog: "{color} Pawn promoted to {name} (-$1.00 Fee)",
+            botThinking: "AI Bot Thinking...",
+            turnP1: "Player 1's Turn",
+            turnP2: "Player 2's Turn",
+            turnYou: "Your Turn",
+            restart: "Play Again",
+            pauseTitle: "PAUSED",
+            resumeGame: "Resume Game",
+            mainMenu: "Main Menu (Restart)",
+            pieces: { 'p': 'Pawn', 'r': 'Rook', 'n': 'Knight', 'b': 'Bishop', 'q': 'Queen', 'k': 'King' }
+        }
+    };
+
+    let currentLang = 'id';
     const BASE_STOCK = { 'p': 8, 'n': 2, 'b': 2, 'r': 2, 'q': 1 };
     const TURN_TIME_LIMIT = 30;
 
-    // --- State Sistem Game ---
     let board = Array(8).fill(null).map(() => Array(8).fill(null));
     let turn = 'w';
     let banks = { w: 5.00, b: 5.00 };
@@ -340,16 +529,14 @@
     let aiDifficulty = 'easy'; 
     let isAiThinking = false;
     let isGameOver = false;
+    let isPaused = false;
 
-    // Sistem Identitas Warna
-    let humanColor = 'w'; // Default Player 1 / Player Utama
-    let aiColor = null;   // Menyimpan warna Bot AI
+    let humanColor = 'w'; 
+    let aiColor = null;   
 
-    // State Timer
     let timeRemaining = TURN_TIME_LIMIT;
     let timerIntervalId = null;
 
-    // State Interaksi Klik
     let selectedSquare = null;
     let validMoves = [];
     let selectedShopType = null;
@@ -357,7 +544,54 @@
     let pendingPromo = null;
     let stallPlies = 0;
 
-    // --- Alur Pemilihan Menu (Wizard) ---
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.getElementById('game-screen').style.display === 'flex' && !isGameOver) {
+            togglePause();
+        }
+    });
+
+    function togglePause() {
+        if (isGameOver) return;
+        isPaused = !isPaused;
+        document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('lang-id').classList.toggle('active', lang === 'id');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        
+        const s = STRINGS[currentLang];
+        document.querySelector('.subtitle').innerText = s.subtitle;
+        document.getElementById('btn-local').innerHTML = s.modeLocal;
+        document.getElementById('btn-ai').innerHTML = s.modeAi;
+        document.getElementById('btn-white').innerHTML = s.white;
+        document.getElementById('btn-black').innerHTML = s.black;
+        document.getElementById('btn-random-color').innerHTML = s.random;
+        document.getElementById('btn-back-modes').innerHTML = s.back;
+        document.getElementById('text-difficulty').innerText = s.chooseDifficulty;
+        document.getElementById('btn-back-colors').innerHTML = s.back;
+        
+        document.getElementById('label-bank-w').innerText = s.whiteBank;
+        document.getElementById('label-bank-b').innerText = s.blackBank;
+        document.getElementById('text-shop-title').innerText = s.shopTitle;
+        document.getElementById('text-graveyard-title').innerText = s.graveyardTitle;
+        document.getElementById('text-promo-title').innerText = s.promoTitle;
+        document.getElementById('btn-restart').innerText = s.restart;
+        
+        document.getElementById('pause-title').innerText = s.pauseTitle;
+        document.getElementById('btn-resume').innerText = s.resumeGame;
+        document.getElementById('btn-main-menu').innerText = s.mainMenu;
+
+        if (document.getElementById('game-screen').style.display === 'flex') {
+            render();
+        }
+    }
+
+    function getPieceName(type) {
+        return STRINGS[currentLang].pieces[type];
+    }
+
     function selectMode(mode) {
         gameMode = mode;
         document.getElementById('step-modes').style.display = 'none';
@@ -365,12 +599,13 @@
         
         const title = document.getElementById('color-title-text');
         const randomBtn = document.getElementById('btn-random-color');
+        const s = STRINGS[currentLang];
         
         if (mode === 'local') {
-            title.innerText = "👥 Pilih Warna untuk Player 1:";
-            randomBtn.style.display = 'none';
+            title.innerText = s.chooseColorP1;
+            randomBtn.style.display = 'block';
         } else {
-            title.innerText = "🤖 Pilih Warna Anda (VS Bot):";
+            title.innerText = s.chooseColorVs;
             randomBtn.style.display = 'block';
         }
     }
@@ -410,22 +645,24 @@
         initGame();
     }
 
-    // --- Inisialisasi Game ---
     function initGame() {
         board = Array(8).fill(null).map(() => Array(8).fill(null));
         isGameOver = false;
+        isPaused = false;
         turn = 'w';
         
-        // Atur posisi awal raja secara internal
-        board[7][4] = { color: 'w', type: 'k', hasMoved: false }; // e1 (Baris 7 internal)
-        board[0][4] = { color: 'b', type: 'k', hasMoved: false }; // e8 (Baris 0 internal)
+        board[7][4] = { color: 'w', type: 'k', hasMoved: false }; 
+        board[0][4] = { color: 'b', type: 'k', hasMoved: false }; 
         
-        log("Game dimulai! Masing-masing mendapatkan dana awal $5.00.");
+        const s = STRINGS[currentLang];
+        log(s.gameStarted);
         if (gameMode === 'ai') {
-            log(`Anda memegang kubu ${humanColor === 'w' ? 'WHITE (Putih)' : 'BLACK (Hitam)'}.`);
-            log(`Mode VS Bot AI aktif (${aiDifficulty.toUpperCase()})!`);
+            log(`${s.youHold} ${humanColor === 'w' ? (currentLang === 'id' ? 'PUTIH (White)' : 'WHITE') : (currentLang === 'id' ? 'HITAM (Black)' : 'BLACK')}.`);
+            log(`${s.modeAiActive} (${aiDifficulty.toUpperCase()})!`);
         } else {
-            log(`Mode Lokal: Player 1 = ${humanColor === 'w' ? 'White' : 'Black'} | Player 2 = ${humanColor === 'w' ? 'Black' : 'White'}`);
+            let p1Warna = humanColor === 'w' ? (currentLang === 'id' ? 'Putih' : 'White') : (currentLang === 'id' ? 'Hitam' : 'Black');
+            let p2Warna = humanColor === 'w' ? (currentLang === 'id' ? 'Hitam' : 'Black') : (currentLang === 'id' ? 'Putih' : 'White');
+            log(s.modeLocalActive.replace('{p1}', p1Warna).replace('{p2}', p2Warna));
         }
         
         render();
@@ -437,7 +674,6 @@
         }
     }
 
-    // --- Manajemen Timer Per Putaran ---
     function startTimer() {
         if (isGameOver) return;
         clearInterval(timerIntervalId);
@@ -445,6 +681,7 @@
         updateTimerUI();
 
         timerIntervalId = setInterval(() => {
+            if (isPaused) return;
             timeRemaining--;
             updateTimerUI();
 
@@ -459,36 +696,34 @@
         const timerBadge = document.getElementById('timer-display');
         timerBadge.innerText = `${timeRemaining}s`;
         if (timeRemaining <= 7) {
-            timerBadge.style.backgroundColor = '#ff1744';
+            timerBadge.parentElement.style.backgroundColor = '#ff1744';
         } else {
-            timerBadge.style.backgroundColor = 'var(--danger)';
+            timerBadge.parentElement.style.backgroundColor = 'var(--danger)';
         }
     }
 
     function triggerTimeout() {
         if (isGameOver) return;
-        if (turn === 'w') {
-            endGame("KALAH WAKTU!", "WHITE kehabisan waktu! BLACK DINYATAKAN MENANG!");
-        } else {
-            if (gameMode === 'ai') {
-                endGame("BOT TIMEOUT!", "BOT AI kehabisan waktu berpikir! WHITE MENANG!");
-            } else {
-                endGame("KALAH WAKTU!", "BLACK kehabisan waktu! WHITE DINYATAKAN MENANG!");
-            }
-        }
+        const s = STRINGS[currentLang];
+        if (turn === 'w') endGame(s.timeoutTitle, s.timeoutWhite);
+        else if (gameMode === 'ai') endGame(s.timeoutTitle, s.timeoutBot);
+        else endGame(s.timeoutTitle, s.timeoutBlack);
     }
 
-    // --- Logika Pergantian Giliran ---
     function switchTurn() {
         if (isGameOver) return;
         turn = turn === 'w' ? 'b' : 'w';
+        const s = STRINGS[currentLang];
         
         let activeGrave = [];
         for (let item of graveyard) {
             if (item.color === turn) item.turnsLeft--;
             if (item.turnsLeft <= 0) {
                 inventory[item.color][item.type]++;
-                log(`Unit ${PIECES[item.type].name} (${item.color.toUpperCase()}) selesai cooldown & kembali ke toko.`, 'log-alert');
+                let msg = currentLang === 'id' 
+                    ? `Unit ${getPieceName(item.type)} (${item.color.toUpperCase()}) selesai cooldown & kembali ke toko.`
+                    : `Unit ${getPieceName(item.type)} (${item.color.toUpperCase()}) finished cooldown & returned to shop.`;
+                log(msg, 'log-alert');
             } else {
                 activeGrave.push(item);
             }
@@ -497,7 +732,7 @@
 
         stallPlies++;
         if (stallPlies >= 30) {
-            endGame("GAME SERI!", "Stalemate Limit tercapai (15 ronde berturut-turut tanpa progres).");
+            endGame(currentLang === 'id' ? "GAME SERI!" : "STALEMATE!", s.stalemateLimit);
             return;
         }
 
@@ -506,14 +741,14 @@
 
         if (inCheck) {
             if (!hasActions) {
-                if (turn === 'w') endGame("CHECKMATE!", "WHITE Terkena Skakmat! BLACK MENANG!");
-                else endGame("CHECKMATE!", "BLACK Terkena Skakmat! WHITE MENANG!");
+                if (turn === 'w') endGame(s.checkmateTitle, s.checkmateWhite);
+                else endGame(s.checkmateTitle, s.checkmateBlack);
                 return;
             } else {
-                log(`Raja ${turn === 'w' ? 'White' : 'Black'} Terkena Skak!`, 'log-alert');
+                log(s.kingInCheck.replace('{color}', turn === 'w' ? 'White' : 'Black'), 'log-alert');
             }
         } else if (!hasActions) {
-            endGame("STALEMATE (SERI)!", "Tidak ada langkah legal tersisa untuk dijalankan.");
+            endGame(currentLang === 'id' ? "STALEMATE (SERI)!" : "STALEMATE!", s.noLegalActions);
             return;
         }
 
@@ -526,9 +761,11 @@
         }
     }
 
-    // --- Logika AI Komputer ---
     function processAiTurn() {
-        if (!isAiThinking || isGameOver) return;
+        if (!isAiThinking || isGameOver || isPaused) {
+            if(isPaused) setTimeout(processAiTurn, 500);
+            return; 
+        }
         isAiThinking = false;
 
         let actions = getAllLegalActions(aiColor);
@@ -573,11 +810,8 @@
             }
         }
 
-        if (chosen.type === 'move') {
-            executeMove(chosen.from.r, chosen.from.c, chosen.to.r, chosen.to.c);
-        } else if (chosen.type === 'buy') {
-            executeBuy(chosen.pieceType, chosen.to.r, chosen.to.c);
-        }
+        if (chosen.type === 'move') executeMove(chosen.from.r, chosen.from.c, chosen.to.r, chosen.to.c);
+        else if (chosen.type === 'buy') executeBuy(chosen.pieceType, chosen.to.r, chosen.to.c);
     }
 
     function getAllLegalActions(color) {
@@ -591,6 +825,11 @@
 
                     let pseudos = getPseudoMoves(r, c, board);
                     pseudos.forEach(m => {
+                        if (board[r][c].type === 'p' && (m.r === 0 || m.r === 7)) {
+                            let simulatedBank = banks[color] - cost;
+                            if (board[m.r][m.c]) simulatedBank += PIECES[board[m.r][m.c].type].price; 
+                            if (simulatedBank < 1.00) return; 
+                        }
                         if (!moveLeavesKingInCheck(r, c, m.r, m.c, color, board)) {
                             list.push({ type: 'move', from: {r, c}, to: m });
                         }
@@ -601,9 +840,7 @@
         ['p','n','b','r','q'].forEach(t => {
             if (inventory[color][t] > 0 && banks[color] >= PIECES[t].price) {
                 let spawns = getSpawnSquares(t, color);
-                spawns.forEach(s => {
-                    list.push({ type: 'buy', pieceType: t, to: s });
-                });
+                spawns.forEach(s => list.push({ type: 'buy', pieceType: t, to: s }));
             }
         });
         return list;
@@ -613,18 +850,14 @@
         return getAllLegalActions(color).length > 0;
     }
 
-    // --- Logika Pemrosesan Klik User ---
     function handleSquareClick(r, c) {
-        if (isGameOver) return;
+        if (isGameOver || isPaused) return; 
         if (gameMode === 'ai' && turn === aiColor) return; 
 
         if (selectedShopType) {
             let found = validSpawns.find(s => s.r === r && s.c === c);
-            if (found) {
-                executeBuy(selectedShopType, r, c);
-            } else {
-                selectedShopType = null; validSpawns = []; render();
-            }
+            if (found) executeBuy(selectedShopType, r, c);
+            else { selectedShopType = null; validSpawns = []; render(); }
             return;
         }
 
@@ -658,14 +891,12 @@
                 if (board[m.r][m.c]) simulatedBank += PIECES[board[m.r][m.c].type].price; 
                 if (simulatedBank < 1.00) return; 
             }
-            if (!moveLeavesKingInCheck(r, c, m.r, m.c, turn, board)) {
-                validMoves.push(m);
-            }
+            if (!moveLeavesKingInCheck(r, c, m.r, m.c, turn, board)) validMoves.push(m);
         });
     }
 
     function selectShopItem(type) {
-        if (isGameOver) return;
+        if (isGameOver || isPaused) return; 
         if (gameMode === 'ai' && turn === aiColor) return;
         if (inventory[turn][type] <= 0 || banks[turn] < PIECES[type].price) return;
 
@@ -678,14 +909,16 @@
         render();
     }
 
-    // --- Eksekusi Mekanik ---
     function executeBuy(type, r, c) {
         let price = PIECES[type].price;
         banks[turn] -= price;
         inventory[turn][type]--;
         board[r][c] = { color: turn, type: type, hasMoved: false };
 
-        log(`${turn === 'w' ? 'White' : 'Black'} membeli ${PIECES[type].name} di ${getCoordName(r,c)} (-$${price.toFixed(2)})`);
+        const s = STRINGS[currentLang];
+        let colorStr = turn === 'w' ? 'White' : 'Black';
+        log(s.buyLog.replace('{color}', colorStr).replace('{name}', getPieceName(type)).replace('{coord}', getCoordName(r,c)).replace('{price}', price.toFixed(2)));
+        
         stallPlies = 0;
         selectedShopType = null; validSpawns = [];
         switchTurn();
@@ -698,17 +931,16 @@
         if (p.type === 'p' && !p.hasMoved) cost = 0;
 
         banks[turn] -= cost;
-        
-        if (cost < 0) {
-            log(`${turn === 'w' ? 'White' : 'Black'} menggerakkan Raja (Ekonomi +$1.00)`);
-        } else {
-            log(`${turn === 'w' ? 'White' : 'Black'} menggerakkan ${PIECES[p.type].name} ke ${getCoordName(tr,tc)} (-$${cost.toFixed(2)})`);
-        }
+        const s = STRINGS[currentLang];
+        let colorStr = turn === 'w' ? 'White' : 'Black';
+
+        if (cost < 0) log(s.moveKingLog.replace('{color}', colorStr));
+        else log(s.moveLog.replace('{color}', colorStr).replace('{name}', getPieceName(p.type)).replace('{coord}', getCoordName(tr,tc)).replace('{price}', cost.toFixed(2)));
 
         if (victim) {
             let bounty = PIECES[victim.type].price;
             banks[turn] += bounty;
-            log(`Bounty! Memakan ${PIECES[victim.type].name} (+$${bounty.toFixed(2)})`, 'log-alert');
+            log(s.bountyLog.replace('{name}', getPieceName(victim.type)).replace('{price}', bounty.toFixed(2)), 'log-alert');
             graveyard.push({ color: victim.color, type: victim.type, turnsLeft: 3 });
             stallPlies = 0;
         }
@@ -746,8 +978,8 @@
             let stock = inventory[turn][t] + graveyard.filter(g => g.color === turn && g.type === t).length;
             if (stock > 0) {
                 let b = document.createElement('button');
-                b.className = 'promo-choice';
-                b.innerText = turn === 'w' ? PIECES[t].sym_w : PIECES[t].sym_b;
+                b.className = `promo-choice piece-${turn}`;
+                b.innerText = PIECES[t].sym;
                 b.onclick = () => {
                     overlay.style.display = 'none';
                     processPromotion(t, pendingPromo.r, pendingPromo.c);
@@ -759,11 +991,11 @@
 
     function processPromotion(type, r, c) {
         banks[turn] -= 1.00; 
-        log(`Pawn ${turn.toUpperCase()} promosi menjadi ${PIECES[type].name} (-$1.00 Fee)`, 'log-alert');
+        const s = STRINGS[currentLang];
+        log(s.promoLog.replace('{color}', turn.toUpperCase()).replace('{name}', getPieceName(type)), 'log-alert');
 
-        if (inventory[turn][type] > 0) {
-            inventory[turn][type]--;
-        } else {
+        if (inventory[turn][type] > 0) inventory[turn][type]--;
+        else {
             let idx = graveyard.findIndex(g => g.color === turn && g.type === type);
             if (idx > -1) graveyard.splice(idx, 1);
         }
@@ -773,7 +1005,6 @@
         switchTurn();
     }
 
-    // --- Aturan Gerak Dasar ---
     function getPseudoMoves(r, c, b) {
         let p = b[r][c];
         let list = [];
@@ -872,7 +1103,6 @@
         return isKingInCheck(color, nextB);
     }
 
-    // --- Fungsi Render UI Visual ---
     function render() {
         renderBoard();
         renderShop();
@@ -882,21 +1112,22 @@
         document.getElementById('bank-b').innerText = `$${banks.b.toFixed(2)}`;
         
         let label = document.getElementById('turn-display');
+        const s = STRINGS[currentLang];
         if (isGameOver) {
-            label.innerText = "GAME Selesai";
+            label.innerText = currentLang === 'id' ? "GAME Selesai" : "Game Over";
             label.style.color = '#ff1744';
             return;
         }
 
         if (gameMode === 'ai' && turn === aiColor) {
-            label.innerText = `Bot AI Berpikir...`;
+            label.innerText = s.botThinking;
             label.style.color = '#ff9f40';
         } else {
             if (gameMode === 'local') {
                 let isP1 = turn === humanColor;
-                label.innerText = isP1 ? "Giliran Player 1" : "Giliran Player 2";
+                label.innerText = isP1 ? s.turnP1 : s.turnP2;
             } else {
-                label.innerText = "Giliran Anda";
+                label.innerText = s.turnYou;
             }
             label.style.color = turn === 'w' ? '#ffffff' : '#aaaaaa';
         }
@@ -909,16 +1140,12 @@
         let rowOrder = [];
         let colOrder = [];
         
-        // FIX LOGIKA INVERSI MATRIKS GRID CSS:
-        // Elemen HTML yang dimasukkan duluan akan merender baris paling ATAS di layar komputer.
         if (humanColor === 'b') {
-            // Player 1 = HITAM -> Baris 7 (Kubu Putih) dirender duluan di ATAS, Baris 0 (Kubu Hitam) di BAWAH.
             for (let r=7; r>=0; r--) rowOrder.push(r);
-            for (let c=7; c>=0; c--) colOrder.push(c); // Sisi kanan-kiri dibalik (File h ke a)
+            for (let c=7; c>=0; c--) colOrder.push(c); 
         } else {
-            // Player 1 = PUTIH -> Baris 0 (Kubu Hitam) dirender duluan di ATAS, Baris 7 (Kubu Putih) di BAWAH.
             for (let r=0; r<8; r++) rowOrder.push(r);
-            for (let c=0; c<8; c++) colOrder.push(c);  // Sisi normal (File a ke h)
+            for (let c=0; c<8; c++) colOrder.push(c);  
         }
 
         for (let r of rowOrder) {
@@ -928,8 +1155,8 @@
 
                 let p = board[r][c];
                 if (p) {
-                    sq.innerText = p.color === 'w' ? PIECES[p.type].sym_w : PIECES[p.type].sym_b;
-                    if (p.color === 'b') sq.style.color = '#121212'; 
+                    sq.innerText = PIECES[p.type].sym;
+                    sq.classList.add(p.color === 'w' ? 'piece-w' : 'piece-b');
                 }
 
                 if (selectedSquare && selectedSquare.r === r && selectedSquare.c === c) sq.classList.add('selected');
@@ -960,13 +1187,15 @@
 
             let card = document.createElement('div');
             card.className = `shop-item ${disabled ? 'disabled' : ''} ${selectedShopType === t ? 'selected' : ''}`;
+            let pieceName = getPieceName(t);
+            let textBeli = currentLang === 'id' ? 'Beli' : 'Buy';
             card.innerHTML = `
-                <div class="item-icon" style="color:${turn==='w'?'#fff':'#aaa'}">${turn==='w'?PIECES[t].sym_w:PIECES[t].sym_b}</div>
+                <div class="item-icon piece-${turn}">${PIECES[t].sym}</div>
                 <div class="item-info">
-                    <b style="font-size:0.8rem;">${PIECES[t].name}</b><br>
-                    <span class="price">Beli: $${price.toFixed(2)}</span><br>
+                    <b style="font-size:0.8rem;">${pieceName}</b><br>
+                    <span class="price">${textBeli}: $${price.toFixed(2)}</span><br>
                     <span class="maint">Maint: $${PIECES[t].move.toFixed(2)}</span><br>
-                    <span style="color:#888">Stok: ${stock}</span>
+                    <span style="color:#888">${currentLang === 'id' ? 'Stok' : 'Stock'}: ${stock}</span>
                 </div>
             `;
             if (!disabled) card.onclick = () => selectShopItem(t);
@@ -979,8 +1208,8 @@
         container.innerHTML = '';
         graveyard.forEach(item => {
             let d = document.createElement('div');
-            d.className = 'grave-unit';
-            d.innerText = item.color === 'w' ? PIECES[item.type].sym_w : PIECES[item.type].sym_b;
+            d.className = `grave-unit piece-${item.color}`;
+            d.innerText = PIECES[item.type].sym;
             d.innerHTML += `<div class="grave-timer">${item.turnsLeft}</div>`;
             container.appendChild(d);
         });
@@ -994,11 +1223,8 @@
         box.prepend(div);
     }
 
-    function getCoordName(r, c) {
-        return `${String.fromCharCode(97 + c)}${8 - r}`;
-    }
+    function getCoordName(r, c) { return `${String.fromCharCode(97 + c)}${8 - r}`; }
 
-    // Fungsi Trigger Selesai Game
     function endGame(titleText, reasonText) {
         isGameOver = true;
         clearInterval(timerIntervalId);
@@ -1009,6 +1235,8 @@
         
         log(`GAME OVER: ${titleText} - ${reasonText}`, 'log-alert');
     }
+
+    setLanguage('id');
 </script>
 
 </body>
