@@ -368,10 +368,10 @@
         
         if (mode === 'local') {
             title.innerText = "👥 Pilih Warna untuk Player 1:";
-            randomBtn.style.display = 'none'; // Mode lokal tidak membutuhkan acak
+            randomBtn.style.display = 'none';
         } else {
             title.innerText = "🤖 Pilih Warna Anda (VS Bot):";
-            randomBtn.style.display = 'block'; // Sediakan opsi random vs Bot
+            randomBtn.style.display = 'block';
         }
     }
 
@@ -388,12 +388,10 @@
         }
 
         if (gameMode === 'local') {
-            // Mode Lokal langsung memulai game setelah warna dipilih
             document.getElementById('menu-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
             initGame();
         } else {
-            // Mode AI berlanjut ke pemilihan tingkat kesulitan
             aiColor = humanColor === 'w' ? 'b' : 'w';
             document.getElementById('step-colors').style.display = 'none';
             document.getElementById('step-difficulties').style.display = 'flex';
@@ -416,11 +414,11 @@
     function initGame() {
         board = Array(8).fill(null).map(() => Array(8).fill(null));
         isGameOver = false;
-        turn = 'w'; // Putih selalu berjalan pertama sesuai regulasi internasional FIDE
+        turn = 'w';
         
-        // Taruh Raja di koordinat formal awal
-        board[7][4] = { color: 'w', type: 'k', hasMoved: false }; // e1
-        board[0][4] = { color: 'b', type: 'k', hasMoved: false }; // e8
+        // Atur posisi awal raja secara internal
+        board[7][4] = { color: 'w', type: 'k', hasMoved: false }; // e1 (Baris 7 internal)
+        board[0][4] = { color: 'b', type: 'k', hasMoved: false }; // e8 (Baris 0 internal)
         
         log("Game dimulai! Masing-masing mendapatkan dana awal $5.00.");
         if (gameMode === 'ai') {
@@ -433,7 +431,6 @@
         render();
         startTimer();
 
-        // Jika bot diatur sebagai White, picu gerakan pertamanya seketika!
         if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
             setTimeout(processAiTurn, 800);
@@ -486,7 +483,6 @@
         if (isGameOver) return;
         turn = turn === 'w' ? 'b' : 'w';
         
-        // Cooldown kuburan
         let activeGrave = [];
         for (let item of graveyard) {
             if (item.color === turn) item.turnsLeft--;
@@ -499,14 +495,12 @@
         }
         graveyard = activeGrave;
 
-        // Aturan Anti-Stall
         stallPlies++;
         if (stallPlies >= 30) {
             endGame("GAME SERI!", "Stalemate Limit tercapai (15 ronde berturut-turut tanpa progres).");
             return;
         }
 
-        // Evaluasi kondisi Checkmate / Stalemate
         let inCheck = isKingInCheck(turn, board);
         let hasActions = playerHasAnyLegalActions(turn);
 
@@ -526,7 +520,6 @@
         render();
         startTimer();
 
-        // Trigger Bot jika giliran milik AI
         if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
             setTimeout(processAiTurn, 700);
@@ -812,7 +805,7 @@
             if (p.type !== 'r') vectors.push([-1,-1],[-1,1],[1,-1],[1,1]);
             vectors.forEach(v => {
                 let tr = r + v[0], tc = c + v[1];
-                while (tr >= 0 && tr < 8 && tc >= 8 ? false : tc >= 0) {
+                while (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
                     if (!b[tr][tc]) { list.push({r: tr, c: tc}); }
                     else {
                         if (b[tr][tc].color !== p.color) list.push({r: tr, c: tc});
@@ -913,15 +906,19 @@
         const area = document.getElementById('board');
         area.innerHTML = '';
 
-        // BALIK PAPAN: Jika user bermain sebagai HITAM, balik urutan agar Hitam berada di posisi bawah
         let rowOrder = [];
         let colOrder = [];
+        
+        // FIX LOGIKA INVERSI MATRIKS GRID CSS:
+        // Elemen HTML yang dimasukkan duluan akan merender baris paling ATAS di layar komputer.
         if (humanColor === 'b') {
-            for (let r=0; r<8; r++) rowOrder.push(r);     // Baris 0 (Hitam) di urutan paling bawah layar
-            for (let c=7; c>=0; c--) colOrder.push(c);     // Sisi kanan-kiri dibalik (File h ke a)
+            // Player 1 = HITAM -> Baris 7 (Kubu Putih) dirender duluan di ATAS, Baris 0 (Kubu Hitam) di BAWAH.
+            for (let r=7; r>=0; r--) rowOrder.push(r);
+            for (let c=7; c>=0; c--) colOrder.push(c); // Sisi kanan-kiri dibalik (File h ke a)
         } else {
-            for (let r=7; r>=0; r--) rowOrder.push(r);     // Baris 7 (Putih) di urutan paling bawah layar
-            for (let c=0; c<8; c++) colOrder.push(c);      // Sisi normal (File a ke h)
+            // Player 1 = PUTIH -> Baris 0 (Kubu Hitam) dirender duluan di ATAS, Baris 7 (Kubu Putih) di BAWAH.
+            for (let r=0; r<8; r++) rowOrder.push(r);
+            for (let c=0; c<8; c++) colOrder.push(c);  // Sisi normal (File a ke h)
         }
 
         for (let r of rowOrder) {
@@ -997,11 +994,11 @@
         box.prepend(div);
     }
 
-    // Penamaan petak koordinat dinamis & akurat
     function getCoordName(r, c) {
         return `${String.fromCharCode(97 + c)}${8 - r}`;
     }
 
+    // Fungsi Trigger Selesai Game
     function endGame(titleText, reasonText) {
         isGameOver = true;
         clearInterval(timerIntervalId);
