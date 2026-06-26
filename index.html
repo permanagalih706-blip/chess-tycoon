@@ -4,18 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Tycoon Pro - Tournament Edition</title>
+    
     <style>
+        /* * ==========================================
+         * CSS VARIABLES & THEME DEFINITION
+         * ==========================================
+         */
         :root {
-            --light-sq: #f0d9b5; /* Krem kayu terang */
-            --dark-sq: #b58863;  /* Cokelat kayu hangat */
+            --light-sq: #f0d9b5; 
+            --dark-sq: #b58863;  
             --bg: #121212;
             --text: #ffffff;
             --panel: #1e1e1e;
-            --border: #333;
+            --border: #333333;
             --accent: #4CAF50;
             --danger: #f44336;
+            --warning: #ff9f40;
+            --highlight: #ffeb3b;
         }
 
+        /* * ==========================================
+         * GLOBAL HTML/BODY STYLING
+         * ==========================================
+         */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
@@ -27,9 +38,13 @@
             align-items: center;
             min-height: 100vh;
             user-select: none;
+            overflow-x: hidden;
         }
 
-        /* Tombol Pilihan Bahasa */
+        /* * ==========================================
+         * LANGUAGE SELECTOR UI
+         * ==========================================
+         */
         .lang-selector {
             position: absolute;
             top: 15px;
@@ -38,27 +53,38 @@
             gap: 8px;
             z-index: 1010;
         }
+
         .lang-btn {
-            background: #333;
-            color: white;
-            border: 1px solid #555;
+            background: #333333;
+            color: #ffffff;
+            border: 1px solid #555555;
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
             font-size: 0.85rem;
-            transition: background 0.2s;
+            transition: background 0.2s ease, border-color 0.2s ease;
         }
+
         .lang-btn.active {
             background: var(--accent);
             border-color: var(--accent);
         }
-        .lang-btn:hover { background: #444; }
 
-        /* Menu Utama / Start Screen */
+        .lang-btn:hover {
+            background: #444444;
+        }
+
+        /* * ==========================================
+         * MAIN MENU / START SCREEN UI
+         * ==========================================
+         */
         #menu-screen {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
             background: rgba(18, 18, 18, 0.98);
             display: flex;
             flex-direction: column;
@@ -79,14 +105,32 @@
             max-width: 400px;
             width: 100%;
             box-sizing: border-box;
+            animation: fadeIn 0.5s ease;
         }
 
-        h1 { margin: 0 0 10px 0; color: var(--accent); font-size: clamp(2rem, 8vw, 2.5rem); }
-        .subtitle { color: #888; margin-bottom: 30px; font-size: 0.95rem; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            color: var(--accent);
+            font-size: clamp(2rem, 8vw, 2.5rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #888888;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
 
         .btn {
             background: var(--accent);
-            color: white;
+            color: #ffffff;
             border: none;
             padding: 12px 24px;
             border-radius: 6px;
@@ -95,12 +139,28 @@
             font-size: 1rem;
             width: 100%;
             margin-bottom: 12px;
-            transition: background 0.2s;
+            transition: background 0.2s ease, transform 0.1s ease;
             box-sizing: border-box;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
-        .btn:hover { background: #45a049; }
-        .btn-secondary { background: #333; border: 1px solid #555; }
-        .btn-secondary:hover { background: #444; }
+
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: #333333;
+            border: 1px solid #555555;
+        }
+
+        .btn-secondary:hover {
+            background: #444444;
+        }
 
         .menu-step {
             display: none;
@@ -109,13 +169,17 @@
             margin-top: 10px;
         }
 
-        /* Layout Utama Game */
+        /* * ==========================================
+         * GAMEPLAY MAIN LAYOUT
+         * ==========================================
+         */
         #game-screen {
             display: none;
             flex-direction: column;
             gap: 15px;
             max-width: 1000px;
             width: 100%;
+            animation: fadeIn 0.5s ease;
         }
 
         .header {
@@ -130,9 +194,20 @@
             font-size: clamp(0.9rem, 3vw, 1.1rem);
             gap: 10px;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .header > div { flex: 1; min-width: 120px; }
-        .bank { font-weight: bold; color: var(--accent); }
+
+        .header > div {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .bank {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.2em;
+            font-family: monospace;
+        }
         
         .center-status {
             display: flex;
@@ -140,10 +215,17 @@
             align-items: center;
             gap: 5px;
         }
-        .turn-indicator { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: bold; }
+
+        .turn-indicator {
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
         .timer-badge {
             background: var(--danger);
-            color: white;
+            color: #ffffff;
             padding: 4px 12px;
             border-radius: 20px;
             font-weight: bold;
@@ -155,16 +237,23 @@
             align-items: center;
             gap: 8px;
             justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease;
         }
+
         .btn-pause-sm {
             background: rgba(0,0,0,0.3);
             border: none;
-            color: white;
+            color: #ffffff;
             border-radius: 50%;
             cursor: pointer;
             padding: 2px 6px;
+            transition: background 0.2s ease;
         }
-        .btn-pause-sm:hover { background: rgba(0,0,0,0.6); }
+
+        .btn-pause-sm:hover {
+            background: rgba(0,0,0,0.6);
+        }
 
         .main-content {
             display: flex;
@@ -173,22 +262,29 @@
             align-items: center;
         }
 
-        /* Responsif untuk Layar Besar */
         @media (min-width: 768px) {
             .main-content {
                 flex-direction: row;
                 align-items: flex-start;
                 justify-content: center;
             }
-            .header { padding: 15px 25px; }
+            .header {
+                padding: 15px 25px;
+            }
         }
 
-        /* Papan Catur Responsif */
+        /* * ==========================================
+         * CHESS BOARD STYLING
+         * ==========================================
+         */
         .board-container { 
             position: relative; 
             width: 100%; 
             max-width: 500px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border-radius: 6px;
         }
+
         .board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
@@ -200,6 +296,7 @@
             aspect-ratio: 1 / 1;
             box-sizing: border-box;
         }
+
         .square {
             width: 100%;
             height: 100%;
@@ -209,35 +306,67 @@
             font-size: clamp(20px, 8vw, 45px);
             cursor: pointer;
             position: relative;
+            transition: background-color 0.1s ease;
         }
-        .light { background-color: var(--light-sq); }
-        .dark { background-color: var(--dark-sq); }
 
-        /* Highlights */
-        .selected { outline: 4px solid #ffeb3b; outline-offset: -4px; z-index: 5; }
-        
-        /* KUSTOMISASI TITIK LANGKAH (VALID MOVE) */
-        .light.valid-move::after {
-            content: ''; width: 26%; height: 26%;
-            border-radius: 50%; background: #ffffff; /* Titik Putih di Kotak Terang */
-            position: absolute;
-            box-shadow: 0 0 2px rgba(0,0,0,0.2);
+        .light {
+            background-color: var(--light-sq);
         }
-        .dark.valid-move::after {
-            content: ''; width: 26%; height: 26%;
-            border-radius: 50%; background: #555555; /* Titik Abu-abu Gelap di Kotak Hitam */
+
+        .dark {
+            background-color: var(--dark-sq);
+        }
+
+        /* Highlights and Move Indicators */
+        .selected {
+            outline: 4px solid var(--highlight);
+            outline-offset: -4px;
+            z-index: 5;
+            background-blend-mode: multiply;
+        }
+        
+        .light.valid-move::after {
+            content: '';
+            width: 26%;
+            height: 26%;
+            border-radius: 50%;
+            background: #ffffff;
             position: absolute;
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+            opacity: 0.8;
+        }
+
+        .dark.valid-move::after {
+            content: '';
+            width: 26%;
+            height: 26%;
+            border-radius: 50%;
+            background: #555555;
+            position: absolute;
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            opacity: 0.8;
         }
 
         .valid-capture::after {
-            content: ''; width: 80%; height: 80%;
-            border-radius: 50%; border: 4px solid rgba(244, 67, 54, 0.7);
+            content: '';
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            border: 4px solid rgba(244, 67, 54, 0.8);
             position: absolute;
             box-sizing: border-box;
+            box-shadow: inset 0 0 10px rgba(244, 67, 54, 0.3);
         }
-        .valid-spawn { background-color: rgba(76, 175, 80, 0.4) !important; }
 
-        /* Panel Toko & Kuburan */
+        .valid-spawn {
+            background-color: rgba(76, 175, 80, 0.5) !important;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* * ==========================================
+         * SIDE PANEL (SHOP & GRAVEYARD)
+         * ==========================================
+         */
         .side-panel {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -249,79 +378,256 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
+
         .panel-section h3 {
-            margin: 0 0 10px 0; font-size: 0.85rem;
-            text-transform: uppercase; color: #aaa; letter-spacing: 1px;
-            border-bottom: 1px solid var(--border); padding-bottom: 5px;
+            margin: 0 0 10px 0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #aaaaaa;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
         }
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
         .shop-item {
-            background: #252525; border: 2px solid transparent;
-            border-radius: 6px; padding: 8px; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center;
-            transition: all 0.2s;
+            background: #252525;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .shop-item:hover:not(.disabled) { background: #2a2a2a; border-color: #555; }
-        .shop-item.selected { border-color: var(--accent); background: #1b331e; }
-        .shop-item.disabled { opacity: 0.3; cursor: not-allowed; }
-        .item-icon { font-size: 30px; margin-bottom: 3px; }
-        .item-info { text-align: center; font-size: 0.75rem; }
-        .price { color: var(--accent); font-weight: bold; }
-        .maint { color: #e57373; }
 
-        .graveyard-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; }
+        .shop-item:hover:not(.disabled) {
+            background: #2a2a2a;
+            border-color: #555555;
+            transform: translateY(-2px);
+        }
+
+        .shop-item.selected {
+            border-color: var(--accent);
+            background: #1b331e;
+        }
+
+        .shop-item.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(100%);
+        }
+
+        .item-icon {
+            font-size: 32px;
+            margin-bottom: 3px;
+        }
+
+        .item-info {
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .price {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .maint {
+            color: #e57373;
+        }
+
+        .graveyard-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 45px;
+            background: #1a1a1a;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px inset #333;
+        }
+
         .grave-unit {
-            position: relative; background: #252525;
-            padding: 4px 8px; border-radius: 4px; font-size: 24px;
+            position: relative;
+            background: #252525;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
+
         .grave-timer {
-            position: absolute; bottom: -4px; right: -4px;
-            background: #f44336; color: white; border-radius: 50%;
-            width: 15px; height: 15px; font-size: 9px;
-            display: flex; justify-content: center; align-items: center; font-weight: bold;
+            position: absolute;
+            bottom: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            border: 1px solid #fff;
         }
 
-        /* Log Panel */
+        /* * ==========================================
+         * COMBAT LOG PANEL
+         * ==========================================
+         */
         .log-panel {
-            background: var(--panel); border: 1px solid var(--border);
-            border-radius: 8px; padding: 12px; height: 100px;
-            overflow-y: auto; font-family: monospace; font-size: 0.85rem; color: #ccc;
-            width: 100%; box-sizing: border-box;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            height: 120px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #cccccc;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
         }
-        .log-entry { margin-bottom: 4px; }
-        .log-alert { color: #ffeb3b; font-weight: bold; }
 
-        /* Overlays (Modal) */
+        .log-entry {
+            margin-bottom: 4px;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-alert {
+            color: var(--highlight);
+            font-weight: bold;
+            background: rgba(255, 235, 59, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* * ==========================================
+         * MODALS AND OVERLAYS
+         * ==========================================
+         */
         .overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.9); display: none;
-            flex-direction: column; justify-content: center; align-items: center;
-            z-index: 100; border-radius: 6px;
-            text-align: center; padding: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 6px;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(3px);
         }
-        .overlay-fullscreen { position: fixed; border-radius: 0; z-index: 2000; }
+
+        .overlay-fullscreen {
+            position: fixed;
+            border-radius: 0;
+            z-index: 2000;
+        }
         
-        .promo-buttons { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; justify-content: center; }
-        .promo-choice {
-            background: #333; border: 2px solid #555; color: white;
-            font-size: 36px; padding: 10px 20px; border-radius: 6px; cursor: pointer;
+        .promo-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        .promo-choice:hover { border-color: var(--accent); background: #444; }
 
-        #game-over-title, #pause-title { font-size: clamp(2rem, 8vw, 3rem); margin: 0 0 10px 0; font-weight: 900; }
-        #game-over-title { color: var(--danger); }
-        #pause-title { color: var(--accent); }
-        #game-over-reason { font-size: 1.2rem; color: #aaa; margin-bottom: 25px; }
+        .promo-choice {
+            background: #333333;
+            border: 2px solid #555555;
+            color: #ffffff;
+            font-size: 36px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
 
-        /* CSS Bidak */
+        .promo-choice:hover {
+            border-color: var(--accent);
+            background: #444444;
+            transform: scale(1.05);
+        }
+
+        #game-over-title, 
+        #pause-title {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            margin: 0 0 10px 0;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        #game-over-title {
+            color: var(--danger);
+            text-shadow: 0 0 20px rgba(244, 67, 54, 0.5);
+        }
+
+        #pause-title {
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+
+        #game-over-reason {
+            font-size: 1.3rem;
+            color: #dddddd;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+        }
+
+        /* * ==========================================
+         * CHESS PIECES TYPOGRAPHY & SHADOWS
+         * ==========================================
+         */
         .piece-w {
             color: #ffffff;
-            text-shadow: 0 0 2px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            text-shadow: 
+                0 0 2px #000, 
+                -1px -1px 0 #000, 
+                1px -1px 0 #000, 
+                -1px 1px 0 #000, 
+                1px 1px 0 #000,
+                0 4px 4px rgba(0,0,0,0.5);
         }
+
         .piece-b {
             color: #000000;
-            text-shadow: 0 0 2px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+            text-shadow: 
+                0 0 2px #fff, 
+                -1px -1px 0 #fff, 
+                1px -1px 0 #fff, 
+                -1px 1px 0 #fff, 
+                1px 1px 0 #fff,
+                0 4px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -352,15 +658,14 @@
 
             <div id="step-difficulties" class="menu-step">
                 <p id="text-difficulty" style="margin: 5px 0; font-size: 0.95rem; color: #aaa;">Pilih Tingkat Kesulitan Bot:</p>
-                <button class="btn" style="background:#4bc0c0;" onclick="finalizeAiStart('easy')">Easy Bot</button>
-                <button class="btn" style="background:#ff9f40;" onclick="finalizeAiStart('normal')">Normal Bot</button>
-                <button class="btn" style="background:#ff6384;" onclick="finalizeAiStart('hard')">Hard Bot</button>
+                <button class="btn" style="background:#4bc0c0; color:#000;" onclick="finalizeAiStart('easy')">👶 Easy Bot (Sering Blunder)</button>
+                <button class="btn" style="background:#ff9f40; color:#000;" onclick="finalizeAiStart('normal')">🧑 Normal Bot (Main Aman)</button>
+                <button class="btn" style="background:#ff6384; color:#fff;" onclick="finalizeAiStart('hard')">😈 Hard Bot (Taktik & Sacrifice)</button>
                 <button class="btn btn-secondary" id="btn-back-colors" style="padding: 6px; margin-top: 10px;" onclick="backToColors()">← Kembali</button>
             </div>
         </div>
     </div>
 
-    <!-- Layar Pause -->
     <div class="overlay overlay-fullscreen" id="pause-overlay">
         <h1 id="pause-title">DIPAUSE</h1>
         <div style="max-width: 300px; width: 100%;">
@@ -370,8 +675,13 @@
     </div>
 
     <div id="game-screen">
+        
         <div class="header">
-            <div><span id="label-bank-w">White Bank</span>: <br><span class="bank" id="bank-w">$5.00</span></div>
+            <div>
+                <span id="label-bank-w">White Bank</span>: <br>
+                <span class="bank" id="bank-w">$5.00</span>
+            </div>
+            
             <div class="center-status">
                 <div class="turn-indicator" id="turn-display">White's Turn</div>
                 <div class="timer-badge">
@@ -379,15 +689,20 @@
                     <button class="btn-pause-sm" onclick="togglePause()" title="Pause">⏸</button>
                 </div>
             </div>
-            <div><span id="label-bank-b">Black Bank</span>: <br><span class="bank" id="bank-b">$5.00</span></div>
+            
+            <div>
+                <span id="label-bank-b">Black Bank</span>: <br>
+                <span class="bank" id="bank-b">$5.00</span>
+            </div>
         </div>
 
         <div class="main-content">
+            
             <div class="board-container">
                 <div class="board" id="board"></div>
                 
                 <div class="overlay" id="promo-overlay">
-                    <h3 id="text-promo-title" style="margin:0;">Promosi Pawn ($1.00 Fee)</h3>
+                    <h3 id="text-promo-title" style="margin:0; color:#fff;">Promosi Pawn ($1.00 Fee)</h3>
                     <div class="promo-buttons" id="promo-options"></div>
                 </div>
 
@@ -403,26 +718,43 @@
                     <h3 id="text-shop-title">The Global Shop (Board 2)</h3>
                     <div class="shop-grid" id="shop-items"></div>
                 </div>
+                
                 <div class="panel-section">
                     <h3 id="text-graveyard-title">Graveyard Cooldown</h3>
                     <div class="graveyard-list" id="graveyard-list"></div>
                 </div>
             </div>
+            
         </div>
 
         <div class="log-panel" id="log-box"></div>
+        
     </div>
 
 <script>
+    /**
+     * =========================================================================
+     * CHESS TYCOON PRO - JAVASCRIPT LOGIC & CONFIGURATION
+     * =========================================================================
+     */
+
+    /**
+     * Piece Configuration Dictionary.
+     * Contains symbols, market prices (for buying and bounties), and movement maintenance costs.
+     */
     const PIECES = {
         'p': { sym: '♟', price: 1.00, move: 0.10 },
         'n': { sym: '♞', price: 3.00, move: 0.30 }, 
         'b': { sym: '♝', price: 3.00, move: 0.30 },
         'r': { sym: '♜', price: 5.00, move: 0.50 },
         'q': { sym: '♛', price: 9.00, move: 0.90 },
-        'k': { sym: '♚', price: 0.00, move: -1.00 } 
+        'k': { sym: '♚', price: 0.00, move: -1.00 } // Moving King gives +$1.00 instead of costing money
     };
 
+    /**
+     * Localization Strings.
+     * Supports multiple languages for the UI and Game Logs.
+     */
     const STRINGS = {
         id: {
             subtitle: "Pertempuran taktis bertemu ekonomi sumber daya yang ketat.",
@@ -448,12 +780,12 @@
             timeoutWhite: "WHITE kehabisan waktu! BLACK DINYATAKAN MENANG!",
             timeoutBot: "BOT AI kehabisan waktu berpikir! WHITE MENANG!",
             timeoutBlack: "BLACK kehabisan waktu! WHITE DINYATAKAN MENANG!",
-            stalemateLimit: "Stalemate Limit tercapai (15 ronde berturut-turut tanpa progres).",
+            stalemateLimit: "Batas Seri tercapai (30 giliran berturut-turut tanpa kemajuan progres).",
             checkmateTitle: "CHECKMATE!",
             checkmateWhite: "WHITE Terkena Skakmat! BLACK MENANG!",
             checkmateBlack: "BLACK Terkena Skakmat! WHITE MENANG!",
             kingInCheck: "Raja {color} Terkena Skak!",
-            noLegalActions: "Tidak ada langkah legal tersisa untuk dijalankan.",
+            noLegalActions: "Tidak ada langkah legal tersisa untuk dijalankan (Stalemate / Miskin).",
             buyLog: "{color} membeli {name} di {coord} (-${price})",
             moveKingLog: "{color} menggerakkan Raja (Ekonomi +$1.00)",
             moveLog: "{color} menggerakkan {name} ke {coord} (-${price})",
@@ -493,12 +825,12 @@
             timeoutWhite: "WHITE ran out of time! BLACK WINS!",
             timeoutBot: "AI BOT ran out of time! WHITE WINS!",
             timeoutBlack: "BLACK ran out of time! WHITE WINS!",
-            stalemateLimit: "Stalemate Limit reached (15 consecutive rounds without progress).",
+            stalemateLimit: "Stalemate Limit reached (30 consecutive plies without progress).",
             checkmateTitle: "CHECKMATE!",
             checkmateWhite: "WHITE is Checkmated! BLACK WINS!",
             checkmateBlack: "BLACK is Checkmated! WHITE WINS!",
             kingInCheck: "{color} King is in Check!",
-            noLegalActions: "No legal actions remaining to execute.",
+            noLegalActions: "No legal actions remaining to execute (Stalemate / Bankrupt).",
             buyLog: "{color} bought {name} at {coord} (-${price})",
             moveKingLog: "{color} moved King (Economy +$1.00)",
             moveLog: "{color} moved {name} to {coord} (-${price})",
@@ -516,52 +848,185 @@
         }
     };
 
+    /**
+     * =========================================================================
+     * ARTIFICIAL INTELLIGENCE: PIECE-SQUARE TABLES (PST)
+     * =========================================================================
+     * These tables give the HARD bot positional understanding.
+     * Higher values indicate better squares for a piece type.
+     * Tables are defined from White's perspective. Black's perspective is 
+     * calculated by mirroring the board vertically.
+     */
+    
+    const PST_PAWN = [
+        [  0,  0,  0,  0,  0,  0,  0,  0 ], // Rank 8 (Promotion)
+        [ 50, 50, 50, 50, 50, 50, 50, 50 ], // Rank 7
+        [ 10, 10, 20, 30, 30, 20, 10, 10 ], // Rank 6
+        [  5,  5, 10, 25, 25, 10,  5,  5 ], // Rank 5
+        [  0,  0,  0, 20, 20,  0,  0,  0 ], // Rank 4
+        [  5, -5,-10,  0,  0,-10, -5,  5 ], // Rank 3
+        [  5, 10, 10,-20,-20, 10, 10,  5 ], // Rank 2
+        [  0,  0,  0,  0,  0,  0,  0,  0 ]  // Rank 1
+    ];
+
+    const PST_KNIGHT = [
+        [-50,-40,-30,-30,-30,-30,-40,-50],
+        [-40,-20,  0,  0,  0,  0,-20,-40],
+        [-30,  0, 10, 15, 15, 10,  0,-30],
+        [-30,  5, 15, 20, 20, 15,  5,-30],
+        [-30,  0, 15, 20, 20, 15,  0,-30],
+        [-30,  5, 10, 15, 15, 10,  5,-30],
+        [-40,-20,  0,  5,  5,  0,-20,-40],
+        [-50,-40,-30,-30,-30,-30,-40,-50]
+    ];
+
+    const PST_BISHOP = [
+        [-20,-10,-10,-10,-10,-10,-10,-20],
+        [-10,  0,  0,  0,  0,  0,  0,-10],
+        [-10,  0,  5, 10, 10,  5,  0,-10],
+        [-10,  5,  5, 10, 10,  5,  5,-10],
+        [-10,  0, 10, 10, 10, 10,  0,-10],
+        [-10, 10, 10, 10, 10, 10, 10,-10],
+        [-10,  5,  0,  0,  0,  0,  5,-10],
+        [-20,-10,-10,-10,-10,-10,-10,-20]
+    ];
+
+    const PST_ROOK = [
+        [  0,  0,  0,  0,  0,  0,  0,  0],
+        [  5, 10, 10, 10, 10, 10, 10,  5],
+        [ -5,  0,  0,  0,  0,  0,  0, -5],
+        [ -5,  0,  0,  0,  0,  0,  0, -5],
+        [ -5,  0,  0,  0,  0,  0,  0, -5],
+        [ -5,  0,  0,  0,  0,  0,  0, -5],
+        [ -5,  0,  0,  0,  0,  0,  0, -5],
+        [  0,  0,  0,  5,  5,  0,  0,  0]
+    ];
+
+    const PST_QUEEN = [
+        [-20,-10,-10, -5, -5,-10,-10,-20],
+        [-10,  0,  0,  0,  0,  0,  0,-10],
+        [-10,  0,  5,  5,  5,  5,  0,-10],
+        [ -5,  0,  5,  5,  5,  5,  0, -5],
+        [  0,  0,  5,  5,  5,  5,  0, -5],
+        [-10,  5,  5,  5,  5,  5,  0,-10],
+        [-10,  0,  5,  0,  0,  0,  0,-10],
+        [-20,-10,-10, -5, -5,-10,-10,-20]
+    ];
+
+    const PST_KING = [
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-20,-30,-30,-40,-40,-30,-30,-20],
+        [-10,-20,-20,-20,-20,-20,-20,-10],
+        [ 20, 20,  0,  0,  0,  0, 20, 20],
+        [ 20, 30, 10,  0,  0, 10, 30, 20]
+    ];
+
+    const AI_PST = {
+        'p': PST_PAWN,
+        'n': PST_KNIGHT,
+        'b': PST_BISHOP,
+        'r': PST_ROOK,
+        'q': PST_QUEEN,
+        'k': PST_KING
+    };
+
+
+    /**
+     * =========================================================================
+     * GLOBAL GAME STATE VARIABLES
+     * =========================================================================
+     */
     let currentLang = 'id';
+    
+    // Default starting inventory for both players in the Global Shop
     const BASE_STOCK = { 'p': 8, 'n': 2, 'b': 2, 'r': 2, 'q': 1 };
+    
+    // Time limit per turn in seconds
     const TURN_TIME_LIMIT = 30;
 
+    // 8x8 Grid representing the chess board.
     let board = Array(8).fill(null).map(() => Array(8).fill(null));
+    
+    // Turn Tracker ('w' for White, 'b' for Black)
     let turn = 'w';
+    
+    // Player Economy
     let banks = { w: 5.00, b: 5.00 };
+    
+    // Global Shop Inventory State
     let inventory = { w: { ...BASE_STOCK }, b: { ...BASE_STOCK } };
+    
+    // Graveyard Array containing captured pieces and their cooldowns
     let graveyard = []; 
+    
+    // Configuration Variables
     let gameMode = 'local'; 
     let aiDifficulty = 'easy'; 
+    
+    // State Flags
     let isAiThinking = false;
     let isGameOver = false;
     let isPaused = false;
 
+    // Player Designations
     let humanColor = 'w'; 
     let aiColor = null;   
 
+    // Timer Variables
     let timeRemaining = TURN_TIME_LIMIT;
     let timerIntervalId = null;
 
+    // User Interaction Variables
     let selectedSquare = null;
     let validMoves = [];
     let selectedShopType = null;
     let validSpawns = [];
     let pendingPromo = null;
-    let stallPlies = 0;
+    let stallPlies = 0; // Tracks plies without pawn move or capture to avoid infinite games
 
+    /**
+     * =========================================================================
+     * EVENT LISTENERS
+     * =========================================================================
+     */
+    
+    // Bind Escape key to toggle pause menu
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && document.getElementById('game-screen').style.display === 'flex' && !isGameOver) {
-            togglePause();
+        if (e.key === 'Escape') {
+            if (document.getElementById('game-screen').style.display === 'flex' && !isGameOver) {
+                togglePause();
+            }
         }
     });
 
+    /**
+     * Toggles the game pause state and handles overlay visibility.
+     */
     function togglePause() {
         if (isGameOver) return;
         isPaused = !isPaused;
-        document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
+        const pauseOverlay = document.getElementById('pause-overlay');
+        pauseOverlay.style.display = isPaused ? 'flex' : 'none';
     }
 
+    /**
+     * Changes the application's localization language and updates the UI immediately.
+     * @param {string} lang - The language code ('id' or 'en').
+     */
     function setLanguage(lang) {
         currentLang = lang;
+        
+        // Update Button Active States
         document.getElementById('lang-id').classList.toggle('active', lang === 'id');
         document.getElementById('lang-en').classList.toggle('active', lang === 'en');
         
+        // Fetch Strings
         const s = STRINGS[currentLang];
+        
+        // Update Menu UI
         document.querySelector('.subtitle').innerText = s.subtitle;
         document.getElementById('btn-local').innerHTML = s.modeLocal;
         document.getElementById('btn-ai').innerHTML = s.modeAi;
@@ -572,6 +1037,7 @@
         document.getElementById('text-difficulty').innerText = s.chooseDifficulty;
         document.getElementById('btn-back-colors').innerHTML = s.back;
         
+        // Update Game UI Labels
         document.getElementById('label-bank-w').innerText = s.whiteBank;
         document.getElementById('label-bank-b').innerText = s.blackBank;
         document.getElementById('text-shop-title').innerText = s.shopTitle;
@@ -579,19 +1045,30 @@
         document.getElementById('text-promo-title').innerText = s.promoTitle;
         document.getElementById('btn-restart').innerText = s.restart;
         
+        // Update Pause Overlays
         document.getElementById('pause-title').innerText = s.pauseTitle;
         document.getElementById('btn-resume').innerText = s.resumeGame;
         document.getElementById('btn-main-menu').innerText = s.mainMenu;
 
+        // Re-render board if game is active
         if (document.getElementById('game-screen').style.display === 'flex') {
             render();
         }
     }
 
+    /**
+     * Retrieves the localized display name of a piece.
+     * @param {string} type - The character code of the piece (e.g., 'p', 'n', 'r').
+     * @returns {string} The localized string.
+     */
     function getPieceName(type) {
         return STRINGS[currentLang].pieces[type];
     }
 
+    /**
+     * Handles the selection of game mode from the Main Menu.
+     * @param {string} mode - 'local' or 'ai'.
+     */
     function selectMode(mode) {
         gameMode = mode;
         document.getElementById('step-modes').style.display = 'none';
@@ -610,11 +1087,18 @@
         }
     }
 
+    /**
+     * Navigates back from Color Selection to Mode Selection.
+     */
     function backToModes() {
         document.getElementById('step-colors').style.display = 'none';
         document.getElementById('step-modes').style.display = 'flex';
     }
 
+    /**
+     * Handles the color selection by the human player.
+     * @param {string} chosenColor - 'w', 'b', or 'random'.
+     */
     function selectColor(chosenColor) {
         if (chosenColor === 'random') {
             humanColor = Math.random() < 0.5 ? 'w' : 'b';
@@ -623,21 +1107,30 @@
         }
 
         if (gameMode === 'local') {
+            // Local Mode starts immediately after color is picked
             document.getElementById('menu-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
             initGame();
         } else {
+            // AI Mode requires setting difficulty first
             aiColor = humanColor === 'w' ? 'b' : 'w';
             document.getElementById('step-colors').style.display = 'none';
             document.getElementById('step-difficulties').style.display = 'flex';
         }
     }
 
+    /**
+     * Navigates back from AI Difficulty Selection to Color Selection.
+     */
     function backToColors() {
         document.getElementById('step-difficulties').style.display = 'none';
         document.getElementById('step-colors').style.display = 'flex';
     }
 
+    /**
+     * Finalizes the AI startup sequence by setting difficulty and booting the engine.
+     * @param {string} difficulty - 'easy', 'normal', or 'hard'.
+     */
     function finalizeAiStart(difficulty) {
         aiDifficulty = difficulty;
         document.getElementById('menu-screen').style.display = 'none';
@@ -645,43 +1138,69 @@
         initGame();
     }
 
+    /**
+     * Initializes a fresh game state, clears arrays, sets up Kings, and starts the timer.
+     */
     function initGame() {
+        // Reset Board Data Structure
         board = Array(8).fill(null).map(() => Array(8).fill(null));
+        
+        // Reset Flags
         isGameOver = false;
         isPaused = false;
         turn = 'w';
+        stallPlies = 0;
         
+        // Setup Kings. Kings are free but give money when moved. 
+        // This is the core engine to prevent soft-locks.
         board[7][4] = { color: 'w', type: 'k', hasMoved: false }; 
         board[0][4] = { color: 'b', type: 'k', hasMoved: false }; 
         
         const s = STRINGS[currentLang];
         log(s.gameStarted);
+        
         if (gameMode === 'ai') {
-            log(`${s.youHold} ${humanColor === 'w' ? (currentLang === 'id' ? 'PUTIH (White)' : 'WHITE') : (currentLang === 'id' ? 'HITAM (Black)' : 'BLACK')}.`);
+            let colorStr = humanColor === 'w' 
+                ? (currentLang === 'id' ? 'PUTIH (White)' : 'WHITE') 
+                : (currentLang === 'id' ? 'HITAM (Black)' : 'BLACK');
+            log(`${s.youHold} ${colorStr}.`);
             log(`${s.modeAiActive} (${aiDifficulty.toUpperCase()})!`);
         } else {
-            let p1Warna = humanColor === 'w' ? (currentLang === 'id' ? 'Putih' : 'White') : (currentLang === 'id' ? 'Hitam' : 'Black');
-            let p2Warna = humanColor === 'w' ? (currentLang === 'id' ? 'Hitam' : 'Black') : (currentLang === 'id' ? 'Putih' : 'White');
+            let p1Warna = humanColor === 'w' 
+                ? (currentLang === 'id' ? 'Putih' : 'White') 
+                : (currentLang === 'id' ? 'Hitam' : 'Black');
+            let p2Warna = humanColor === 'w' 
+                ? (currentLang === 'id' ? 'Hitam' : 'Black') 
+                : (currentLang === 'id' ? 'Putih' : 'White');
             log(s.modeLocalActive.replace('{p1}', p1Warna).replace('{p2}', p2Warna));
         }
         
+        // Draw the initial board
         render();
+        
+        // Initiate the global countdown timer
         startTimer();
 
+        // If the AI is White, it must make the first move immediately
         if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
             setTimeout(processAiTurn, 800);
         }
     }
 
+    /**
+     * Initializes or resets the global turn timer.
+     */
     function startTimer() {
         if (isGameOver) return;
+        
         clearInterval(timerIntervalId);
         timeRemaining = TURN_TIME_LIMIT;
         updateTimerUI();
 
         timerIntervalId = setInterval(() => {
-            if (isPaused) return;
+            if (isPaused) return; // Freeze timer if paused
+            
             timeRemaining--;
             updateTimerUI();
 
@@ -692,76 +1211,267 @@
         }, 1000);
     }
 
+    /**
+     * Updates the HTML elements representing the timer.
+     */
     function updateTimerUI() {
         const timerBadge = document.getElementById('timer-display');
         timerBadge.innerText = `${timeRemaining}s`;
+        
+        // Add visual urgency if time is running low
         if (timeRemaining <= 7) {
-            timerBadge.parentElement.style.backgroundColor = '#ff1744';
+            timerBadge.parentElement.style.backgroundColor = '#ff1744'; // Bright red
+            timerBadge.parentElement.style.animation = 'pulse 1s infinite';
         } else {
-            timerBadge.parentElement.style.backgroundColor = 'var(--danger)';
+            timerBadge.parentElement.style.backgroundColor = 'var(--danger)'; // Standard
+            timerBadge.parentElement.style.animation = 'none';
         }
     }
 
+    /**
+     * Ends the game specifically due to a timeout.
+     */
     function triggerTimeout() {
         if (isGameOver) return;
         const s = STRINGS[currentLang];
-        if (turn === 'w') endGame(s.timeoutTitle, s.timeoutWhite);
-        else if (gameMode === 'ai') endGame(s.timeoutTitle, s.timeoutBot);
-        else endGame(s.timeoutTitle, s.timeoutBlack);
+        
+        if (turn === 'w') {
+            endGame(s.timeoutTitle, s.timeoutWhite);
+        } else if (gameMode === 'ai') {
+            endGame(s.timeoutTitle, s.timeoutBot);
+        } else {
+            endGame(s.timeoutTitle, s.timeoutBlack);
+        }
     }
 
+    /**
+     * Ends the current player's turn, processes graveyard cooldowns, 
+     * checks for checkmate/stalemate, and switches control to the opponent.
+     */
     function switchTurn() {
         if (isGameOver) return;
+        
+        // Toggle Turn variable
         turn = turn === 'w' ? 'b' : 'w';
         const s = STRINGS[currentLang];
         
+        // Process Graveyard Cooldowns
         let activeGrave = [];
         for (let item of graveyard) {
-            if (item.color === turn) item.turnsLeft--;
+            // Decrease cooldown if it's the piece's owner's new turn
+            if (item.color === turn) {
+                item.turnsLeft--;
+            }
+            
+            // Check if cooldown is finished
             if (item.turnsLeft <= 0) {
+                // Return to Inventory
                 inventory[item.color][item.type]++;
+                
+                // Construct Log Message
+                let pieceName = getPieceName(item.type);
                 let msg = currentLang === 'id' 
-                    ? `Unit ${getPieceName(item.type)} (${item.color.toUpperCase()}) selesai cooldown & kembali ke toko.`
-                    : `Unit ${getPieceName(item.type)} (${item.color.toUpperCase()}) finished cooldown & returned to shop.`;
+                    ? `Unit ${pieceName} (${item.color.toUpperCase()}) selesai cooldown & kembali ke toko.`
+                    : `Unit ${pieceName} (${item.color.toUpperCase()}) finished cooldown & returned to shop.`;
                 log(msg, 'log-alert');
             } else {
+                // Keep in graveyard
                 activeGrave.push(item);
             }
         }
         graveyard = activeGrave;
 
+        // Check 30 Plies Stalemate Rule
         stallPlies++;
         if (stallPlies >= 30) {
-            endGame(currentLang === 'id' ? "GAME SERI!" : "STALEMATE!", s.stalemateLimit);
+            let titleStr = currentLang === 'id' ? "GAME SERI!" : "STALEMATE!";
+            endGame(titleStr, s.stalemateLimit);
             return;
         }
 
+        // Check for Game Over States (Checkmate or No Actions)
         let inCheck = isKingInCheck(turn, board);
         let hasActions = playerHasAnyLegalActions(turn);
 
         if (inCheck) {
             if (!hasActions) {
-                if (turn === 'w') endGame(s.checkmateTitle, s.checkmateWhite);
-                else endGame(s.checkmateTitle, s.checkmateBlack);
+                // Checkmate
+                if (turn === 'w') {
+                    endGame(s.checkmateTitle, s.checkmateWhite);
+                } else {
+                    endGame(s.checkmateTitle, s.checkmateBlack);
+                }
                 return;
             } else {
-                log(s.kingInCheck.replace('{color}', turn === 'w' ? 'White' : 'Black'), 'log-alert');
+                // Just Check
+                let colorName = turn === 'w' ? 'White' : 'Black';
+                log(s.kingInCheck.replace('{color}', colorName), 'log-alert');
             }
         } else if (!hasActions) {
-            endGame(currentLang === 'id' ? "STALEMATE (SERI)!" : "STALEMATE!", s.noLegalActions);
+            // Stalemate (No Check, but no moves or money)
+            let titleStr = currentLang === 'id' ? "STALEMATE (SERI)!" : "STALEMATE!";
+            endGame(titleStr, s.noLegalActions);
             return;
         }
 
+        // Proceed to next turn
         render();
         startTimer();
 
+        // If it's the AI's turn, trigger the engine
         if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
+            // Fake delay for human-like feeling
             setTimeout(processAiTurn, 700);
         }
     }
 
+    /**
+     * Retrieves the positional value of a piece using the PST.
+     * Automatically adjusts for perspective (White vs Black).
+     * @param {string} type - Piece type.
+     * @param {string} color - Piece owner.
+     * @param {number} r - Row index.
+     * @param {number} c - Col index.
+     * @returns {number} The positional score.
+     */
+    function getPSTValue(type, color, r, c) {
+        if (!AI_PST[type]) return 0;
+        
+        let table = AI_PST[type];
+        // If Black, reverse the row to evaluate from Black's perspective
+        let evalRow = color === 'w' ? r : (7 - r);
+        
+        return table[evalRow][c] || 0;
+    }
+
+    /**
+     * Evaluates a potential action (Move or Buy) for the AI.
+     * Incorporates positional logic, economics, sacrifice logic, and danger avoidance.
+     * @param {Object} act - Action Object {type, from, to, pieceType}.
+     * @param {string} myColor - AI's color.
+     * @param {string} oppColor - Human's color.
+     * @param {string} diff - Difficulty string.
+     * @returns {number} An integer representing the desirability of the move.
+     */
+    function evaluateAction(act, myColor, oppColor, diff) {
+        let score = 0;
+        
+        // Deep copy the board for mental simulation
+        let simulatedBoard = board.map(row => [...row]);
+
+        if (act.type === 'move') {
+            let p = simulatedBoard[act.from.r][act.from.c];
+            let target = simulatedBoard[act.to.r][act.to.c];
+            
+            // Execute simulated movement
+            simulatedBoard[act.to.r][act.to.c] = p;
+            simulatedBoard[act.from.r][act.from.c] = null;
+
+            // Base Reward: Eating an enemy piece gives massive points based on market value
+            if (target) {
+                score += PIECES[target.type].price * 15; 
+            }
+
+            // Post-Movement Board Analysis
+            let checksOpponent = isKingInCheck(oppColor, simulatedBoard);
+            if (checksOpponent) score += 30; 
+
+            // Threat Analysis: Will the piece die if it goes here?
+            let isNowAttacked = isSquareAttackedBy(oppColor, act.to.r, act.to.c, simulatedBoard);
+            
+            // HARD DIFFICULTY LOGIC - TACTICS, SACRIFICES, PST
+            if (diff === 'hard') {
+                // Apply Piece-Square Table Positional Advantage
+                let oldPosVal = getPSTValue(p.type, myColor, act.from.r, act.from.c);
+                let newPosVal = getPSTValue(p.type, myColor, act.to.r, act.to.c);
+                score += (newPosVal - oldPosVal) * 0.5; // Factor in positional growth
+
+                if (isNowAttacked) {
+                    if (target && PIECES[target.type].price >= PIECES[p.type].price) {
+                        // Profitable Trade (e.g., losing a Knight to kill a Queen)
+                        score += 5; 
+                    } else if (checksOpponent && PIECES[p.type].price <= 3.0) {
+                        // SACRIFICE PLAY: Willingly lose a cheap piece (Pawn/Knight/Bishop) 
+                        // if it means delivering a Check to apply pressure.
+                        score += 15;
+                    } else {
+                        // Terrible Blunder: Moving into death without compensation
+                        score -= PIECES[p.type].price * 25;
+                    }
+                } else {
+                    // Safe move
+                    score += 5;
+                    // Encourage pawn marching towards promotion
+                    if (p.type === 'p') score += 8;
+                }
+
+                // Evasion Logic: Rewarded for rescuing a piece currently in danger
+                let wasAttacked = isSquareAttackedBy(oppColor, act.from.r, act.from.c, board);
+                if (wasAttacked && !isNowAttacked) {
+                    score += PIECES[p.type].price * 20; 
+                }
+
+                // Economy Management: Do not farm King excessively if already wealthy
+                if (p.type === 'k') {
+                    if (banks[myColor] < 1.50) {
+                        score += 15; // Farm money to survive
+                    } else if (banks[myColor] > 6.00) {
+                        score -= 20; // Stop moving the King and develop pieces
+                    }
+                }
+
+            // NORMAL DIFFICULTY LOGIC - SAFE PLAY
+            } else if (diff === 'normal') {
+                if (isNowAttacked) {
+                    // Heavily penalize moving into danger
+                    score -= PIECES[p.type].price * 15; 
+                }
+                
+                // Prevent wandering kings
+                if (p.type === 'k' && banks[myColor] > 2.0) {
+                    score -= 15;
+                }
+            }
+
+        } else if (act.type === 'buy') {
+            // Evaluates buying/spawning a piece from the shop
+            score += PIECES[act.pieceType].price * 3;
+            simulatedBoard[act.to.r][act.to.c] = { color: myColor, type: act.pieceType, hasMoved: false };
+
+            let isNowAttacked = isSquareAttackedBy(oppColor, act.to.r, act.to.c, simulatedBoard);
+            let checksOpponent = isKingInCheck(oppColor, simulatedBoard);
+
+            if (diff === 'hard') {
+                // Apply PST to spawns (e.g. better to spawn knights near center files)
+                let posVal = getPSTValue(act.pieceType, myColor, act.to.r, act.to.c);
+                score += posVal * 0.4;
+
+                if (checksOpponent) score += 40; // Spawning directly into a check is devastating
+                
+                // Do not throw money away on useless spawns
+                if (isNowAttacked) {
+                    score -= PIECES[act.pieceType].price * 15;
+                }
+                
+                // Do not bankrupt yourself unless buying a Queen
+                if (banks[myColor] - PIECES[act.pieceType].price < 1.0 && act.pieceType !== 'q') {
+                    score -= 20;
+                }
+            } else if (diff === 'normal') {
+                if (isNowAttacked) score -= PIECES[act.pieceType].price * 10;
+            }
+        }
+
+        return score;
+    }
+
+    /**
+     * Executes the AI's turn by generating legal moves, scoring them, 
+     * filtering based on difficulty constraints, and executing the choice.
+     */
     function processAiTurn() {
+        // Block if not allowed to think or game paused
         if (!isAiThinking || isGameOver || isPaused) {
             if(isPaused) setTimeout(processAiTurn, 500);
             return; 
@@ -769,67 +1479,79 @@
         isAiThinking = false;
 
         let actions = getAllLegalActions(aiColor);
-        if (actions.length === 0) return; 
+        if (actions.length === 0) return; // Should be caught by switchTurn Stalemate check
+
+        // 1. Evaluate all possibilities
+        actions.forEach(act => {
+            act.score = evaluateAction(act, aiColor, humanColor, aiDifficulty);
+        });
+
+        // 2. Sort Highest Score (Best) -> Lowest Score (Worst)
+        actions.sort((a, b) => b.score - a.score);
 
         let chosen = null;
 
+        // 3. Apply Difficulty Persona
         if (aiDifficulty === 'easy') {
-            chosen = actions[Math.floor(Math.random() * actions.length)];
-        } else {
-            actions.forEach(act => {
-                let score = 0;
-                if (act.type === 'move') {
-                    let piece = board[act.from.r][act.from.c];
-                    let target = board[act.to.r][act.to.c];
-                    
-                    if (target) score += PIECES[target.type].price * 12;
-                    if (piece.type === 'k') {
-                        if (banks[aiColor] < 1.50) score += 15; 
-                        else if (banks[aiColor] > 7.00) score -= 5; 
-                    }
-                    if (piece.type === 'p') score += 1.5;
-
-                    if (aiDifficulty === 'hard' && isSquareAttackedBy(humanColor, act.to.r, act.to.c, board)) {
-                        score -= PIECES[piece.type].price * 8;
-                    }
-                } else if (act.type === 'buy') {
-                    score += PIECES[act.pieceType].price * 2;
-                    let remnants = banks[aiColor] - PIECES[act.pieceType].price;
-                    if (remnants <= 0.01) score -= (aiDifficulty === 'hard') ? 40 : 15;
-                }
-                act.score = score;
-            });
-
-            actions.sort((a, b) => b.score - a.score);
-
-            if (aiDifficulty === 'normal') {
-                let pool = actions.slice(0, Math.min(3, actions.length));
-                chosen = pool[Math.floor(Math.random() * pool.length)];
+            // EASY: Prone to blunders.
+            // 40% chance to completely ignore its top 3 best moves.
+            if (Math.random() < 0.4 && actions.length > 3) {
+                let badMoves = actions.slice(3); 
+                chosen = badMoves[Math.floor(Math.random() * badMoves.length)];
             } else {
-                chosen = actions[0];
+                chosen = actions[Math.floor(Math.random() * actions.length)]; // Pure Random
             }
+        } else if (aiDifficulty === 'normal') {
+            // NORMAL: Plays safe.
+            // Pick a random move from its top 3 safe moves to add variety without blundering.
+            let pool = actions.slice(0, Math.min(3, actions.length));
+            chosen = pool[Math.floor(Math.random() * pool.length)];
+        } else {
+            // HARD: Cold, calculating, tactical.
+            // Always take the move with the absolute highest mathematical advantage.
+            chosen = actions[0];
         }
 
-        if (chosen.type === 'move') executeMove(chosen.from.r, chosen.from.c, chosen.to.r, chosen.to.c);
-        else if (chosen.type === 'buy') executeBuy(chosen.pieceType, chosen.to.r, chosen.to.c);
+        // 4. Execute the chosen action
+        if (chosen.type === 'move') {
+            executeMove(chosen.from.r, chosen.from.c, chosen.to.r, chosen.to.c);
+        } else if (chosen.type === 'buy') {
+            executeBuy(chosen.pieceType, chosen.to.r, chosen.to.c);
+        }
     }
 
+    /**
+     * Gathers every single legal action a player can make on the board or in the shop.
+     * Used for both AI thinking and checking for Stalemate conditions.
+     * @param {string} color - The player color.
+     * @returns {Array} List of legal action objects.
+     */
     function getAllLegalActions(color) {
         let list = [];
-        for (let r=0; r<8; r++) {
-            for (let c=0; c<8; c++) {
+        
+        // Check Board Moves
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
                 if (board[r][c] && board[r][c].color === color) {
                     let cost = PIECES[board[r][c].type].move;
+                    
+                    // First pawn move is free
                     if (board[r][c].type === 'p' && !board[r][c].hasMoved) cost = 0;
+                    
+                    // Skip piece entirely if player can't afford movement cost
                     if (board[r][c].type !== 'k' && banks[color] < cost) continue;
 
                     let pseudos = getPseudoMoves(r, c, board);
+                    
                     pseudos.forEach(m => {
+                        // Promotion Edge Case: Need $1.00 extra to promote safely
                         if (board[r][c].type === 'p' && (m.r === 0 || m.r === 7)) {
                             let simulatedBank = banks[color] - cost;
                             if (board[m.r][m.c]) simulatedBank += PIECES[board[m.r][m.c].type].price; 
                             if (simulatedBank < 1.00) return; 
                         }
+                        
+                        // Check if move leaves own king in check
                         if (!moveLeavesKingInCheck(r, c, m.r, m.c, color, board)) {
                             list.push({ type: 'move', from: {r, c}, to: m });
                         }
@@ -837,126 +1559,226 @@
                 }
             }
         }
+        
+        // Check Shop Spawns
         ['p','n','b','r','q'].forEach(t => {
             if (inventory[color][t] > 0 && banks[color] >= PIECES[t].price) {
                 let spawns = getSpawnSquares(t, color);
-                spawns.forEach(s => list.push({ type: 'buy', pieceType: t, to: s }));
+                spawns.forEach(s => {
+                    list.push({ type: 'buy', pieceType: t, to: s });
+                });
             }
         });
+        
         return list;
     }
 
+    /**
+     * Checks if a player has any valid moves left.
+     * @param {string} color 
+     * @returns {boolean}
+     */
     function playerHasAnyLegalActions(color) {
         return getAllLegalActions(color).length > 0;
     }
 
+    /**
+     * Master function handling human click interactions on the chessboard.
+     * @param {number} r - Row index clicked.
+     * @param {number} c - Column index clicked.
+     */
     function handleSquareClick(r, c) {
         if (isGameOver || isPaused) return; 
+        
+        // Ignore clicks if it's the AI's turn
         if (gameMode === 'ai' && turn === aiColor) return; 
 
+        // 1. Spawning a Piece Logic
         if (selectedShopType) {
             let found = validSpawns.find(s => s.r === r && s.c === c);
-            if (found) executeBuy(selectedShopType, r, c);
-            else { selectedShopType = null; validSpawns = []; render(); }
+            if (found) {
+                executeBuy(selectedShopType, r, c);
+            } else { 
+                // Cancel Shop Selection if clicking outside valid spawn
+                selectedShopType = null; 
+                validSpawns = []; 
+                render(); 
+            }
             return;
         }
 
+        // 2. Executing a Piece Move Logic
         let targetMove = validMoves.find(m => m.r === r && m.c === c);
         if (targetMove) {
             executeMove(selectedSquare.r, selectedSquare.c, r, c);
             return;
         }
 
+        // 3. Selecting a Piece on the board
         let p = board[r][c];
         if (p && p.color === turn) {
-            selectedSquare = {r, c}; selectedShopType = null; validSpawns = [];
+            selectedSquare = {r, c}; 
+            selectedShopType = null; 
+            validSpawns = [];
             calculateMovesForSquare(r, c);
         } else {
-            selectedSquare = null; validMoves = [];
+            // Deselect
+            selectedSquare = null; 
+            validMoves = [];
         }
         render();
     }
 
+    /**
+     * Calculates valid moves specifically for the UI to display dots.
+     * @param {number} r - Row index.
+     * @param {number} c - Col index.
+     */
     function calculateMovesForSquare(r, c) {
         validMoves = [];
         let p = board[r][c];
+        
         let cost = PIECES[p.type].move;
         if (p.type === 'p' && !p.hasMoved) cost = 0;
+        
+        // Check Affordability
         if (p.type !== 'k' && banks[turn] < cost) return;
 
         let pseudo = getPseudoMoves(r, c, board);
+        
         pseudo.forEach(m => {
+            // Check Promotion Affordability Logic
             if (p.type === 'p' && (m.r === 0 || m.r === 7)) {
                 let simulatedBank = banks[turn] - cost;
                 if (board[m.r][m.c]) simulatedBank += PIECES[board[m.r][m.c].type].price; 
                 if (simulatedBank < 1.00) return; 
             }
-            if (!moveLeavesKingInCheck(r, c, m.r, m.c, turn, board)) validMoves.push(m);
+            
+            if (!moveLeavesKingInCheck(r, c, m.r, m.c, turn, board)) {
+                validMoves.push(m);
+            }
         });
     }
 
+    /**
+     * Handles human interaction with the Global Shop UI.
+     * @param {string} type - Piece character.
+     */
     function selectShopItem(type) {
         if (isGameOver || isPaused) return; 
         if (gameMode === 'ai' && turn === aiColor) return;
+        
+        // Disallow if out of stock or out of money
         if (inventory[turn][type] <= 0 || banks[turn] < PIECES[type].price) return;
 
+        // Toggle selection off if already selected
         if (selectedShopType === type) {
-            selectedShopType = null; validSpawns = [];
+            selectedShopType = null; 
+            validSpawns = [];
         } else {
-            selectedShopType = type; selectedSquare = null; validMoves = [];
+            // Set Selection
+            selectedShopType = type; 
+            selectedSquare = null; 
+            validMoves = [];
             validSpawns = getSpawnSquares(type, turn);
         }
         render();
     }
 
+    /**
+     * Core Execution: Deducts funds and spawns a purchased piece onto the board.
+     * Ends the turn immediately.
+     */
     function executeBuy(type, r, c) {
         let price = PIECES[type].price;
         banks[turn] -= price;
         inventory[turn][type]--;
+        
         board[r][c] = { color: turn, type: type, hasMoved: false };
 
         const s = STRINGS[currentLang];
         let colorStr = turn === 'w' ? 'White' : 'Black';
-        log(s.buyLog.replace('{color}', colorStr).replace('{name}', getPieceName(type)).replace('{coord}', getCoordName(r,c)).replace('{price}', price.toFixed(2)));
         
-        stallPlies = 0;
-        selectedShopType = null; validSpawns = [];
+        let pName = getPieceName(type);
+        let coordName = getCoordName(r,c);
+        let priceFormat = price.toFixed(2);
+        
+        log(s.buyLog
+            .replace('{color}', colorStr)
+            .replace('{name}', pName)
+            .replace('{coord}', coordName)
+            .replace('{price}', priceFormat)
+        );
+        
+        stallPlies = 0; // Buying resets stalemate counter
+        selectedShopType = null; 
+        validSpawns = [];
+        
         switchTurn();
     }
 
+    /**
+     * Core Execution: Deducts funds, handles captures, and physically moves a piece.
+     * Ends the turn, OR pauses to open Promotion UI if applicable.
+     */
     function executeMove(fr, fc, tr, tc) {
         let p = board[fr][fc];
         let victim = board[tr][tc];
+        
+        // Calculate Cost
         let cost = PIECES[p.type].move;
         if (p.type === 'p' && !p.hasMoved) cost = 0;
 
         banks[turn] -= cost;
+        
         const s = STRINGS[currentLang];
         let colorStr = turn === 'w' ? 'White' : 'Black';
 
-        if (cost < 0) log(s.moveKingLog.replace('{color}', colorStr));
-        else log(s.moveLog.replace('{color}', colorStr).replace('{name}', getPieceName(p.type)).replace('{coord}', getCoordName(tr,tc)).replace('{price}', cost.toFixed(2)));
+        // Logging
+        if (cost < 0) {
+            log(s.moveKingLog.replace('{color}', colorStr));
+        } else {
+            let logMsg = s.moveLog
+                .replace('{color}', colorStr)
+                .replace('{name}', getPieceName(p.type))
+                .replace('{coord}', getCoordName(tr,tc))
+                .replace('{price}', cost.toFixed(2));
+            log(logMsg);
+        }
 
+        // Handle Capture & Graveyard
         if (victim) {
             let bounty = PIECES[victim.type].price;
             banks[turn] += bounty;
-            log(s.bountyLog.replace('{name}', getPieceName(victim.type)).replace('{price}', bounty.toFixed(2)), 'log-alert');
+            
+            let bountyMsg = s.bountyLog
+                .replace('{name}', getPieceName(victim.type))
+                .replace('{price}', bounty.toFixed(2));
+            log(bountyMsg, 'log-alert');
+            
+            // Send to Grave
             graveyard.push({ color: victim.color, type: victim.type, turnsLeft: 3 });
-            stallPlies = 0;
+            stallPlies = 0; // Capture resets stalemate counter
         }
 
-        if (p.type === 'p') stallPlies = 0;
+        if (p.type === 'p') stallPlies = 0; // Pawn move resets stalemate counter
 
+        // Physical Move
         board[tr][tc] = p;
         board[fr][fc] = null;
         p.hasMoved = true;
 
+        // Check Pawn Promotion Trigger
         if (p.type === 'p' && (tr === 0 || tr === 7)) {
             if (gameMode === 'ai' && turn === aiColor) {
+                // AI Promotion Logic (Auto-Queen, or Rook if Queen unavailable)
                 let choice = 'q';
-                if (inventory[aiColor]['q'] <= 0 && !graveyard.some(g=>g.color===aiColor&&g.type==='q')) choice = 'r';
+                if (inventory[aiColor]['q'] <= 0 && !graveyard.some(g=>g.color===aiColor&&g.type==='q')) {
+                    choice = 'r';
+                }
                 processPromotion(choice, tr, tc);
             } else {
+                // Human Promotion UI
                 clearInterval(timerIntervalId); 
                 pendingPromo = { r: tr, c: tc };
                 openPromoUI();
@@ -964,67 +1786,110 @@
             }
         }
 
-        selectedSquare = null; validMoves = [];
+        // Finalize
+        selectedSquare = null; 
+        validMoves = [];
         switchTurn();
     }
 
+    /**
+     * Opens the visual modal allowing a user to select a promotion type.
+     */
     function openPromoUI() {
         const overlay = document.getElementById('promo-overlay');
         const box = document.getElementById('promo-options');
         box.innerHTML = '';
         overlay.style.display = 'flex';
 
+        // Display options if player has them in stock OR graveyard
         ['q', 'r', 'b', 'n'].forEach(t => {
             let stock = inventory[turn][t] + graveyard.filter(g => g.color === turn && g.type === t).length;
+            
             if (stock > 0) {
-                let b = document.createElement('button');
-                b.className = `promo-choice piece-${turn}`;
-                b.innerText = PIECES[t].sym;
-                b.onclick = () => {
+                let btn = document.createElement('button');
+                btn.className = `promo-choice piece-${turn}`;
+                btn.innerText = PIECES[t].sym;
+                btn.onclick = () => {
                     overlay.style.display = 'none';
                     processPromotion(t, pendingPromo.r, pendingPromo.c);
                 };
-                box.appendChild(b);
+                box.appendChild(btn);
             }
         });
     }
 
+    /**
+     * Finalizes pawn promotion, processes the $1.00 fee, and resolves inventory.
+     */
     function processPromotion(type, r, c) {
+        // Promotion Costs $1.00
         banks[turn] -= 1.00; 
+        
         const s = STRINGS[currentLang];
         log(s.promoLog.replace('{color}', turn.toUpperCase()).replace('{name}', getPieceName(type)), 'log-alert');
 
-        if (inventory[turn][type] > 0) inventory[turn][type]--;
-        else {
+        // Deduct from inventory or steal from graveyard
+        if (inventory[turn][type] > 0) {
+            inventory[turn][type]--;
+        } else {
             let idx = graveyard.findIndex(g => g.color === turn && g.type === type);
             if (idx > -1) graveyard.splice(idx, 1);
         }
 
+        // Apply morph
         board[r][c] = { color: turn, type: type, hasMoved: true };
-        pendingPromo = null; selectedSquare = null; validMoves = [];
+        
+        // Reset state
+        pendingPromo = null; 
+        selectedSquare = null; 
+        validMoves = [];
         switchTurn();
     }
 
+    /**
+     * Calculates physical movement trajectories according to standard Chess rules, 
+     * ignoring King Safety.
+     * @param {number} r 
+     * @param {number} c 
+     * @param {Array} b - The board reference.
+     * @returns {Array} List of {r, c} objects.
+     */
     function getPseudoMoves(r, c, b) {
         let p = b[r][c];
         let list = [];
-        let side = p.color === 'w' ? -1 : 1;
+        let side = p.color === 'w' ? -1 : 1; // White moves up (-1), Black down (+1)
 
+        /** Helper */
         let pushSafe = (tr, tc) => {
             if (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
-                if (!b[tr][tc]) { list.push({r: tr, c: tc}); return true; }
-                if (b[tr][tc].color !== p.color) { list.push({r: tr, c: tc}); }
+                if (!b[tr][tc]) { 
+                    list.push({r: tr, c: tc}); 
+                    return true; 
+                }
+                if (b[tr][tc].color !== p.color) { 
+                    list.push({r: tr, c: tc}); 
+                }
             }
             return false;
         };
 
         if (p.type === 'p') {
+            // Forward Movement
             if (r + side >= 0 && r + side < 8 && !b[r+side][c]) {
                 list.push({r: r+side, c});
-                if (!p.hasMoved && !b[r + side*2][c]) list.push({r: r + side*2, c});
+                // Double Jump
+                if (!p.hasMoved && !b[r + side*2][c]) {
+                    list.push({r: r + side*2, c});
+                }
             }
-            if (c - 1 >= 0 && b[r+side][c-1] && b[r+side][c-1].color !== p.color) list.push({r: r+side, c: c-1});
-            if (c + 1 < 8 && b[r+side][c+1] && b[r+side][c+1].color !== p.color) list.push({r: r+side, c: c+1});
+            // Capture Diagonal Left
+            if (c - 1 >= 0 && b[r+side][c-1] && b[r+side][c-1].color !== p.color) {
+                list.push({r: r+side, c: c-1});
+            }
+            // Capture Diagonal Right
+            if (c + 1 < 8 && b[r+side][c+1] && b[r+side][c+1].color !== p.color) {
+                list.push({r: r+side, c: c+1});
+            }
         }
         else if (p.type === 'n') {
             let jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
@@ -1032,17 +1897,24 @@
         }
         else if (p.type === 'b' || p.type === 'r' || p.type === 'q') {
             let vectors = [];
-            if (p.type !== 'b') vectors.push([-1,0],[1,0],[0,-1],[0,1]);
-            if (p.type !== 'r') vectors.push([-1,-1],[-1,1],[1,-1],[1,1]);
+            // Straight lines for Rook and Queen
+            if (p.type !== 'b') vectors.push([-1,0], [1,0], [0,-1], [0,1]);
+            // Diagonals for Bishop and Queen
+            if (p.type !== 'r') vectors.push([-1,-1], [-1,1], [1,-1], [1,1]);
+            
             vectors.forEach(v => {
                 let tr = r + v[0], tc = c + v[1];
                 while (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
-                    if (!b[tr][tc]) { list.push({r: tr, c: tc}); }
-                    else {
-                        if (b[tr][tc].color !== p.color) list.push({r: tr, c: tc});
-                        break;
+                    if (!b[tr][tc]) { 
+                        list.push({r: tr, c: tc}); 
+                    } else {
+                        if (b[tr][tc].color !== p.color) {
+                            list.push({r: tr, c: tc});
+                        }
+                        break; // Blocked by piece
                     }
-                    tr += v[0]; tc += v[1];
+                    tr += v[0]; 
+                    tc += v[1];
                 }
             });
         }
@@ -1053,66 +1925,118 @@
         return list;
     }
 
+    /**
+     * Determines valid spawn locations for newly bought pieces.
+     * @param {string} type - Piece character.
+     * @param {string} color - Player color.
+     * @returns {Array} List of {r, c} objects.
+     */
     function getSpawnSquares(type, color) {
         let homeRank = color === 'w' ? 7 : 0;
         let pawnRank = color === 'w' ? 6 : 1;
         let raw = [];
 
-        if (type === 'p') { for(let i=0; i<8; i++) raw.push({r: pawnRank, c: i}); }
-        else if (type === 'r') raw.push({r: homeRank, c: 0}, {r: homeRank, c: 7});
-        else if (type === 'n') raw.push({r: homeRank, c: 1}, {r: homeRank, c: 6});
-        else if (type === 'b') raw.push({r: homeRank, c: 2}, {r: homeRank, c: 5});
-        else if (type === 'q') raw.push({r: homeRank, c: 3});
+        if (type === 'p') { 
+            for(let i=0; i<8; i++) raw.push({r: pawnRank, c: i}); 
+        } else if (type === 'r') {
+            raw.push({r: homeRank, c: 0}, {r: homeRank, c: 7});
+        } else if (type === 'n') {
+            raw.push({r: homeRank, c: 1}, {r: homeRank, c: 6});
+        } else if (type === 'b') {
+            raw.push({r: homeRank, c: 2}, {r: homeRank, c: 5});
+        } else if (type === 'q') {
+            raw.push({r: homeRank, c: 3}); // Queens generally spawn on D-file
+        }
 
+        // Filter out squares that are occupied or leave King in check
         return raw.filter(s => !board[s.r][s.c] && !buyLeavesKingInCheck(type, s.r, s.c, color, board));
     }
 
+    /**
+     * Scans the board to determine if the specified color's King is under attack.
+     */
     function isKingInCheck(color, b) {
         let kr = -1, kc = -1;
+        
+        // Find the King
         for (let r=0; r<8; r++) {
             for (let c=0; c<8; c++) {
-                if (b[r][c] && b[r][c].type === 'k' && b[r][c].color === color) { kr = r; kc = c; break; }
+                if (b[r][c] && b[r][c].type === 'k' && b[r][c].color === color) { 
+                    kr = r; 
+                    kc = c; 
+                    break; 
+                }
             }
         }
-        if (kr === -1) return false;
+        
+        if (kr === -1) return false; // Fail safe
+        
+        // Check if attacked
         return isSquareAttackedBy(color === 'w' ? 'b' : 'w', kr, kc, b);
     }
 
+    /**
+     * Validates if a specific coordinate is within the attack range of enemy pieces.
+     */
     function isSquareAttackedBy(attackerColor, tr, tc, b) {
         for (let r=0; r<8; r++) {
             for (let c=0; c<8; c++) {
                 if (b[r][c] && b[r][c].color === attackerColor) {
                     let moves = getPseudoMoves(r, c, b);
-                    if (moves.some(m => m.r === tr && m.c === tc)) return true;
+                    if (moves.some(m => m.r === tr && m.c === tc)) {
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
 
+    /**
+     * Mental Sandbox: Verifies if a move violates the "Cannot put King in check" rule.
+     */
     function moveLeavesKingInCheck(fr, fc, tr, tc, color, b) {
-        let nextB = b.map(row => [...row]);
+        let nextB = b.map(row => [...row]); // Deep copy
+        
         nextB[tr][tc] = nextB[fr][fc];
         nextB[fr][fc] = null;
+        
         return isKingInCheck(color, nextB);
     }
 
+    /**
+     * Mental Sandbox: Verifies if a spawn purchase leaves King in check.
+     */
     function buyLeavesKingInCheck(type, tr, tc, color, b) {
-        let nextB = b.map(row => [...row]);
+        let nextB = b.map(row => [...row]); // Deep copy
+        
         nextB[tr][tc] = { color: color, type: type, hasMoved: false };
+        
         return isKingInCheck(color, nextB);
     }
 
+    /**
+     * =========================================================================
+     * UI RENDERING SUBSYSTEM
+     * =========================================================================
+     */
+
+    /**
+     * Master render function. Calls specific segment renders.
+     */
     function render() {
         renderBoard();
         renderShop();
         renderGraveyard();
 
+        // Update Bank Text
         document.getElementById('bank-w').innerText = `$${banks.w.toFixed(2)}`;
         document.getElementById('bank-b').innerText = `$${banks.b.toFixed(2)}`;
         
+        // Update Turn UI Indicator
         let label = document.getElementById('turn-display');
         const s = STRINGS[currentLang];
+        
         if (isGameOver) {
             label.innerText = currentLang === 'id' ? "GAME Selesai" : "Game Over";
             label.style.color = '#ff1744';
@@ -1133,6 +2057,9 @@
         }
     }
 
+    /**
+     * Renders the 8x8 Grid, handling board rotation based on human color perspective.
+     */
     function renderBoard() {
         const area = document.getElementById('board');
         area.innerHTML = '';
@@ -1140,6 +2067,7 @@
         let rowOrder = [];
         let colOrder = [];
         
+        // Orientation Matrix
         if (humanColor === 'b') {
             for (let r=7; r>=0; r--) rowOrder.push(r);
             for (let c=7; c>=0; c--) colOrder.push(c); 
@@ -1148,23 +2076,30 @@
             for (let c=0; c<8; c++) colOrder.push(c);  
         }
 
+        // Draw Divs
         for (let r of rowOrder) {
             for (let c of colOrder) {
                 let sq = document.createElement('div');
                 sq.className = `square ${(r+c)%2 === 0 ? 'light' : 'dark'}`;
 
+                // Inject Piece
                 let p = board[r][c];
                 if (p) {
                     sq.innerText = PIECES[p.type].sym;
                     sq.classList.add(p.color === 'w' ? 'piece-w' : 'piece-b');
                 }
 
-                if (selectedSquare && selectedSquare.r === r && selectedSquare.c === c) sq.classList.add('selected');
+                // Highlight Selected Square
+                if (selectedSquare && selectedSquare.r === r && selectedSquare.c === c) {
+                    sq.classList.add('selected');
+                }
                 
+                // Highlight Valid Moves
                 if (validMoves.some(m => m.r === r && m.c === c)) {
                     sq.classList.add(board[r][c] ? 'valid-capture' : 'valid-move');
                 }
 
+                // Highlight Valid Spawn Squares
                 if (selectedShopType && validSpawns.some(s => s.r === r && s.c === c)) {
                     sq.classList.add('valid-spawn');
                 }
@@ -1175,6 +2110,9 @@
         }
     }
 
+    /**
+     * Generates shop cards dynamically based on current inventory and wealth.
+     */
     function renderShop() {
         const grid = document.getElementById('shop-items');
         grid.innerHTML = '';
@@ -1187,25 +2125,35 @@
 
             let card = document.createElement('div');
             card.className = `shop-item ${disabled ? 'disabled' : ''} ${selectedShopType === t ? 'selected' : ''}`;
+            
             let pieceName = getPieceName(t);
             let textBeli = currentLang === 'id' ? 'Beli' : 'Buy';
+            let textStok = currentLang === 'id' ? 'Stok' : 'Stock';
+            
             card.innerHTML = `
                 <div class="item-icon piece-${turn}">${PIECES[t].sym}</div>
                 <div class="item-info">
                     <b style="font-size:0.8rem;">${pieceName}</b><br>
                     <span class="price">${textBeli}: $${price.toFixed(2)}</span><br>
                     <span class="maint">Maint: $${PIECES[t].move.toFixed(2)}</span><br>
-                    <span style="color:#888">${currentLang === 'id' ? 'Stok' : 'Stock'}: ${stock}</span>
+                    <span style="color:#888">${textStok}: ${stock}</span>
                 </div>
             `;
-            if (!disabled) card.onclick = () => selectShopItem(t);
+            
+            if (!disabled) {
+                card.onclick = () => selectShopItem(t);
+            }
             grid.appendChild(card);
         });
     }
 
+    /**
+     * Generates visual representations of pieces currently in cooldown.
+     */
     function renderGraveyard() {
         const container = document.getElementById('graveyard-list');
         container.innerHTML = '';
+        
         graveyard.forEach(item => {
             let d = document.createElement('div');
             d.className = `grave-unit piece-${item.color}`;
@@ -1215,6 +2163,11 @@
         });
     }
 
+    /**
+     * Console equivalent UI logging system.
+     * @param {string} msg - Message to display.
+     * @param {string} styleClass - Optional CSS class for highlighting.
+     */
     function log(msg, styleClass = '') {
         const box = document.getElementById('log-box');
         let div = document.createElement('div');
@@ -1223,8 +2176,16 @@
         box.prepend(div);
     }
 
-    function getCoordName(r, c) { return `${String.fromCharCode(97 + c)}${8 - r}`; }
+    /**
+     * Translates coordinates to Algebraic Chess Notation (e.g. e4).
+     */
+    function getCoordName(r, c) { 
+        return `${String.fromCharCode(97 + c)}${8 - r}`; 
+    }
 
+    /**
+     * Triggers Game Over overlay and stops timers.
+     */
     function endGame(titleText, reasonText) {
         isGameOver = true;
         clearInterval(timerIntervalId);
@@ -1236,7 +2197,9 @@
         log(`GAME OVER: ${titleText} - ${reasonText}`, 'log-alert');
     }
 
+    // Initialize application logic
     setLanguage('id');
+
 </script>
 
 </body>
