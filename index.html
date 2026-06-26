@@ -41,8 +41,18 @@
             overflow-x: hidden;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         /* * ==========================================
-         * LANGUAGE SELECTOR UI
+         * LANGUAGE SELECTOR & CUSTOM TOGGLE
          * ==========================================
          */
         .lang-selector {
@@ -71,9 +81,46 @@
             border-color: var(--accent);
         }
 
-        .lang-btn:hover {
-            background: #444444;
+        .lang-btn:hover { background: #444444; }
+
+        .custom-toggle-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1010;
         }
+
+        .custom-toggle {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .custom-toggle:hover { background: #444; border-color: #777; }
+
+        .custom-toggle.active {
+            background: linear-gradient(135deg, #7c4dff, #e040fb);
+            border-color: #e040fb;
+            box-shadow: 0 0 12px rgba(224, 64, 251, 0.4);
+        }
+
+        .custom-toggle .toggle-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #666;
+            transition: background 0.3s ease;
+        }
+
+        .custom-toggle.active .toggle-dot { background: #76ff03; }
 
         /* * ==========================================
          * MAIN MENU / START SCREEN UI
@@ -81,10 +128,7 @@
          */
         #menu-screen {
             position: fixed;
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(18, 18, 18, 0.98);
             display: flex;
             flex-direction: column;
@@ -106,11 +150,6 @@
             width: 100%;
             box-sizing: border-box;
             animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
@@ -144,22 +183,25 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
-        .btn:hover {
-            background: #45a049;
-            transform: translateY(-1px);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
+        .btn:hover { background: #45a049; transform: translateY(-1px); }
+        .btn:active { transform: translateY(1px); }
 
         .btn-secondary {
             background: #333333;
             border: 1px solid #555555;
         }
+        .btn-secondary:hover { background: #444444; }
 
-        .btn-secondary:hover {
-            background: #444444;
+        .btn-impossible {
+            background: linear-gradient(135deg, #b71c1c, #880e4f);
+            border: 2px solid #ff1744;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255,23,68,0.6);
+            animation: pulse 2s infinite;
+        }
+        .btn-impossible:hover {
+            background: linear-gradient(135deg, #d32f2f, #ad1457);
+            box-shadow: 0 0 20px rgba(255,23,68,0.4);
         }
 
         .menu-step {
@@ -197,10 +239,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        .header > div {
-            flex: 1;
-            min-width: 120px;
-        }
+        .header > div { flex: 1; min-width: 120px; }
 
         .bank {
             font-weight: bold;
@@ -250,10 +289,7 @@
             padding: 2px 6px;
             transition: background 0.2s ease;
         }
-
-        .btn-pause-sm:hover {
-            background: rgba(0,0,0,0.6);
-        }
+        .btn-pause-sm:hover { background: rgba(0,0,0,0.6); }
 
         .main-content {
             display: flex;
@@ -268,9 +304,7 @@
                 align-items: flex-start;
                 justify-content: center;
             }
-            .header {
-                padding: 15px 25px;
-            }
+            .header { padding: 15px 25px; }
         }
 
         /* * ==========================================
@@ -309,15 +343,9 @@
             transition: background-color 0.1s ease;
         }
 
-        .light {
-            background-color: var(--light-sq);
-        }
+        .light { background-color: var(--light-sq); }
+        .dark { background-color: var(--dark-sq); }
 
-        .dark {
-            background-color: var(--dark-sq);
-        }
-
-        /* Highlights and Move Indicators */
         .selected {
             outline: 4px solid var(--highlight);
             outline-offset: -4px;
@@ -325,32 +353,20 @@
             background-blend-mode: multiply;
         }
         
-        .light.valid-move::after {
+        .light.valid-move::after, .dark.valid-move::after {
             content: '';
-            width: 26%;
-            height: 26%;
+            width: 26%; height: 26%;
             border-radius: 50%;
-            background: #ffffff;
             position: absolute;
             box-shadow: 0 0 4px rgba(0,0,0,0.3);
             opacity: 0.8;
         }
-
-        .dark.valid-move::after {
-            content: '';
-            width: 26%;
-            height: 26%;
-            border-radius: 50%;
-            background: #555555;
-            position: absolute;
-            box-shadow: 0 0 4px rgba(0,0,0,0.5);
-            opacity: 0.8;
-        }
+        .light.valid-move::after { background: #ffffff; }
+        .dark.valid-move::after { background: #555555; }
 
         .valid-capture::after {
             content: '';
-            width: 80%;
-            height: 80%;
+            width: 80%; height: 80%;
             border-radius: 50%;
             border: 4px solid rgba(244, 67, 54, 0.8);
             position: absolute;
@@ -361,6 +377,17 @@
         .valid-spawn {
             background-color: rgba(76, 175, 80, 0.5) !important;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* En passant capture indicator */
+        .valid-ep::after {
+            content: '';
+            width: 80%; height: 80%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 152, 0, 0.8);
+            position: absolute;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 10px rgba(255, 152, 0, 0.3);
         }
 
         /* * ==========================================
@@ -427,10 +454,7 @@
             filter: grayscale(100%);
         }
 
-        .item-icon {
-            font-size: 32px;
-            margin-bottom: 3px;
-        }
+        .item-icon { font-size: 32px; margin-bottom: 3px; }
 
         .item-info {
             text-align: center;
@@ -438,14 +462,8 @@
             line-height: 1.3;
         }
 
-        .price {
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        .maint {
-            color: #e57373;
-        }
+        .price { color: var(--accent); font-weight: bold; }
+        .maint { color: #e57373; }
 
         .graveyard-list {
             display: flex;
@@ -469,13 +487,11 @@
 
         .grave-timer {
             position: absolute;
-            bottom: -6px;
-            right: -6px;
+            bottom: -6px; right: -6px;
             background: var(--danger);
             color: #ffffff;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 16px; height: 16px;
             font-size: 10px;
             display: flex;
             justify-content: center;
@@ -509,10 +525,7 @@
             padding: 2px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
-        .log-entry:last-child {
-            border-bottom: none;
-        }
+        .log-entry:last-child { border-bottom: none; }
 
         .log-alert {
             color: var(--highlight);
@@ -528,10 +541,7 @@
          */
         .overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.9);
             display: none;
             flex-direction: column;
@@ -576,8 +586,7 @@
             transform: scale(1.05);
         }
 
-        #game-over-title, 
-        #pause-title {
+        #game-over-title, #pause-title {
             font-size: clamp(2rem, 8vw, 3.5rem);
             margin: 0 0 10px 0;
             font-weight: 900;
@@ -629,11 +638,29 @@
                 1px 1px 0 #fff,
                 0 4px 4px rgba(0,0,0,0.5);
         }
+
+        /* Backstabber dual-allegiance glow */
+        .piece-backstabber {
+            text-shadow:
+                0 0 6px #e040fb,
+                -1px -1px 0 #e040fb,
+                1px -1px 0 #e040fb,
+                -1px 1px 0 #e040fb,
+                1px 1px 0 #e040fb,
+                0 4px 4px rgba(0,0,0,0.5) !important;
+        }
     </style>
 </head>
 <body>
 
     <div id="menu-screen">
+        <div class="custom-toggle-container">
+            <button id="btn-custom-toggle" class="custom-toggle" onclick="toggleCustomUnits()">
+                <span class="toggle-dot"></span>
+                Custom Units: OFF
+            </button>
+        </div>
+
         <div class="lang-selector">
             <button id="lang-id" class="lang-btn active" onclick="setLanguage('id')">ID</button>
             <button id="lang-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
@@ -661,6 +688,7 @@
                 <button class="btn" style="background:#4bc0c0; color:#000;" onclick="finalizeAiStart('easy')">👶 Easy Bot (Sering Blunder)</button>
                 <button class="btn" style="background:#ff9f40; color:#000;" onclick="finalizeAiStart('normal')">🧑 Normal Bot (Main Aman)</button>
                 <button class="btn" style="background:#ff6384; color:#fff;" onclick="finalizeAiStart('hard')">😈 Hard Bot (Taktik & Sacrifice)</button>
+                <button class="btn btn-impossible" onclick="finalizeAiStart('impossible')">💀 Impossible Bot (Minimax AI)</button>
                 <button class="btn btn-secondary" id="btn-back-colors" style="padding: 6px; margin-top: 10px;" onclick="backToColors()">← Kembali</button>
             </div>
         </div>
@@ -675,13 +703,11 @@
     </div>
 
     <div id="game-screen">
-        
         <div class="header">
             <div>
                 <span id="label-bank-w">White Bank</span>: <br>
                 <span class="bank" id="bank-w">$5.00</span>
             </div>
-            
             <div class="center-status">
                 <div class="turn-indicator" id="turn-display">White's Turn</div>
                 <div class="timer-badge">
@@ -689,7 +715,6 @@
                     <button class="btn-pause-sm" onclick="togglePause()" title="Pause">⏸</button>
                 </div>
             </div>
-            
             <div>
                 <span id="label-bank-b">Black Bank</span>: <br>
                 <span class="bank" id="bank-b">$5.00</span>
@@ -697,7 +722,6 @@
         </div>
 
         <div class="main-content">
-            
             <div class="board-container">
                 <div class="board" id="board"></div>
                 
@@ -724,11 +748,9 @@
                     <div class="graveyard-list" id="graveyard-list"></div>
                 </div>
             </div>
-            
         </div>
 
         <div class="log-panel" id="log-box"></div>
-        
     </div>
 
 <script>
@@ -736,25 +758,31 @@
      * =========================================================================
      * CHESS TYCOON PRO - JAVASCRIPT LOGIC & CONFIGURATION
      * =========================================================================
+     * Features: En Passant, Modified Castling, Impossible AI (Minimax),
+     *           Custom Units (Unicorn, Dragon, Archbishop, Chancellor, Backstabber)
      */
 
-    /**
-     * Piece Configuration Dictionary.
-     * Contains symbols, market prices (for buying and bounties), and movement maintenance costs.
-     */
+    /* =========================================================================
+     * PIECE CONFIGURATION
+     * ========================================================================= */
     const PIECES = {
         'p': { sym: '♟', price: 1.00, move: 0.10 },
         'n': { sym: '♞', price: 3.00, move: 0.30 }, 
         'b': { sym: '♝', price: 3.00, move: 0.30 },
         'r': { sym: '♜', price: 5.00, move: 0.50 },
         'q': { sym: '♛', price: 9.00, move: 0.90 },
-        'k': { sym: '♚', price: 0.00, move: -1.00 } // Moving King gives +$1.00 instead of costing money
+        'k': { sym: '♚', price: 0.00, move: -1.00 },
+        // Custom Units
+        's': { sym: '🗡️', price: 1.50, move: 0.15 },  // Backstabber
+        'u': { sym: '🦄', price: 3.50, move: 0.35 },  // Unicorn
+        'a': { sym: '🏹', price: 6.00, move: 0.60 },  // Archbishop
+        'c': { sym: '⚔️', price: 8.00, move: 0.80 },  // Chancellor
+        'd': { sym: '🐉', price: 12.00, move: 1.20 }   // Dragon
     };
 
-    /**
-     * Localization Strings.
-     * Supports multiple languages for the UI and Game Logs.
-     */
+    /* =========================================================================
+     * LOCALIZATION STRINGS
+     * ========================================================================= */
     const STRINGS = {
         id: {
             subtitle: "Pertempuran taktis bertemu ekonomi sumber daya yang ketat.",
@@ -799,7 +827,15 @@
             pauseTitle: "DIPAUSE",
             resumeGame: "Lanjutkan Permainan",
             mainMenu: "Ke Main Menu (Restart)",
-            pieces: { 'p': 'Pion', 'r': 'Benteng', 'n': 'Kuda', 'b': 'Menteri', 'q': 'Ratu', 'k': 'Raja' }
+            enPassantLog: "En Passant! {color} menangkap {name} (+${price})",
+            castleKingside: "{color} melakukan Castling Kingside!",
+            castleQueenside: "{color} melakukan Castling Queenside!",
+            customOn: "Custom Units: ON",
+            customOff: "Custom Units: OFF",
+            pieces: { 
+                'p': 'Pion', 'r': 'Benteng', 'n': 'Kuda', 'b': 'Menteri', 'q': 'Ratu', 'k': 'Raja',
+                's': 'Backstabber', 'u': 'Unicorn', 'a': 'Archbishop', 'c': 'Chancellor', 'd': 'Dragon'
+            }
         },
         en: {
             subtitle: "Tactical warfare meets tight resource economics.",
@@ -844,29 +880,30 @@
             pauseTitle: "PAUSED",
             resumeGame: "Resume Game",
             mainMenu: "Main Menu (Restart)",
-            pieces: { 'p': 'Pawn', 'r': 'Rook', 'n': 'Knight', 'b': 'Bishop', 'q': 'Queen', 'k': 'King' }
+            enPassantLog: "En Passant! {color} captured {name} (+${price})",
+            castleKingside: "{color} castled Kingside!",
+            castleQueenside: "{color} castled Queenside!",
+            customOn: "Custom Units: ON",
+            customOff: "Custom Units: OFF",
+            pieces: { 
+                'p': 'Pawn', 'r': 'Rook', 'n': 'Knight', 'b': 'Bishop', 'q': 'Queen', 'k': 'King',
+                's': 'Backstabber', 'u': 'Unicorn', 'a': 'Archbishop', 'c': 'Chancellor', 'd': 'Dragon'
+            }
         }
     };
 
-    /**
-     * =========================================================================
-     * ARTIFICIAL INTELLIGENCE: PIECE-SQUARE TABLES (PST)
-     * =========================================================================
-     * These tables give the HARD bot positional understanding.
-     * Higher values indicate better squares for a piece type.
-     * Tables are defined from White's perspective. Black's perspective is 
-     * calculated by mirroring the board vertically.
-     */
-    
+    /* =========================================================================
+     * PIECE-SQUARE TABLES (PST) FOR AI
+     * ========================================================================= */
     const PST_PAWN = [
-        [  0,  0,  0,  0,  0,  0,  0,  0 ], // Rank 8 (Promotion)
-        [ 50, 50, 50, 50, 50, 50, 50, 50 ], // Rank 7
-        [ 10, 10, 20, 30, 30, 20, 10, 10 ], // Rank 6
-        [  5,  5, 10, 25, 25, 10,  5,  5 ], // Rank 5
-        [  0,  0,  0, 20, 20,  0,  0,  0 ], // Rank 4
-        [  5, -5,-10,  0,  0,-10, -5,  5 ], // Rank 3
-        [  5, 10, 10,-20,-20, 10, 10,  5 ], // Rank 2
-        [  0,  0,  0,  0,  0,  0,  0,  0 ]  // Rank 1
+        [  0,  0,  0,  0,  0,  0,  0,  0 ],
+        [ 50, 50, 50, 50, 50, 50, 50, 50 ],
+        [ 10, 10, 20, 30, 30, 20, 10, 10 ],
+        [  5,  5, 10, 25, 25, 10,  5,  5 ],
+        [  0,  0,  0, 20, 20,  0,  0,  0 ],
+        [  5, -5,-10,  0,  0,-10, -5,  5 ],
+        [  5, 10, 10,-20,-20, 10, 10,  5 ],
+        [  0,  0,  0,  0,  0,  0,  0,  0 ]
     ];
 
     const PST_KNIGHT = [
@@ -924,76 +961,107 @@
         [ 20, 30, 10,  0,  0, 10, 30, 20]
     ];
 
+    // Custom piece PSTs
+    const PST_UNICORN = [
+        [-60,-50,-40,-40,-40,-40,-50,-60],
+        [-50,-30, -5, -5, -5, -5,-30,-50],
+        [-40, -5, 10, 15, 15, 10, -5,-40],
+        [-40,  0, 15, 25, 25, 15,  0,-40],
+        [-40,  0, 15, 25, 25, 15,  0,-40],
+        [-40, -5, 10, 15, 15, 10, -5,-40],
+        [-50,-30, -5, -5, -5, -5,-30,-50],
+        [-60,-50,-40,-40,-40,-40,-50,-60]
+    ];
+
+    const PST_ARCHBISHOP = [
+        [-30,-20,-10,-10,-10,-10,-20,-30],
+        [-20,  0,  5,  5,  5,  5,  0,-20],
+        [-10,  5, 12, 18, 18, 12,  5,-10],
+        [-10,  5, 18, 22, 22, 18,  5,-10],
+        [-10,  5, 18, 22, 22, 18,  5,-10],
+        [-10,  5, 12, 18, 18, 12,  5,-10],
+        [-20,  0,  5,  5,  5,  5,  0,-20],
+        [-30,-20,-10,-10,-10,-10,-20,-30]
+    ];
+
+    const PST_CHANCELLOR = [
+        [-10,  0,  0,  5,  5,  0,  0,-10],
+        [  0,  5, 10, 10, 10, 10,  5,  0],
+        [ -5,  5, 12, 12, 12, 12,  5, -5],
+        [ -5,  0, 12, 18, 18, 12,  0, -5],
+        [ -5,  0, 12, 18, 18, 12,  0, -5],
+        [ -5,  5, 12, 12, 12, 12,  5, -5],
+        [  0,  5, 10, 10, 10, 10,  5,  0],
+        [-10,  0,  0,  5,  5,  0,  0,-10]
+    ];
+
+    const PST_DRAGON = [
+        [-20,-10,-10, -5, -5,-10,-10,-20],
+        [-10,  5,  5,  5,  5,  5,  5,-10],
+        [-10,  5, 12, 12, 12, 12,  5,-10],
+        [ -5,  5, 12, 18, 18, 12,  5, -5],
+        [ -5,  5, 12, 18, 18, 12,  5, -5],
+        [-10,  5, 12, 12, 12, 12,  5,-10],
+        [-10,  5,  5,  5,  5,  5,  5,-10],
+        [-20,-10,-10, -5, -5,-10,-10,-20]
+    ];
+
     const AI_PST = {
-        'p': PST_PAWN,
-        'n': PST_KNIGHT,
-        'b': PST_BISHOP,
-        'r': PST_ROOK,
-        'q': PST_QUEEN,
-        'k': PST_KING
+        'p': PST_PAWN, 'n': PST_KNIGHT, 'b': PST_BISHOP,
+        'r': PST_ROOK, 'q': PST_QUEEN, 'k': PST_KING,
+        's': PST_PAWN, 'u': PST_UNICORN, 'a': PST_ARCHBISHOP,
+        'c': PST_CHANCELLOR, 'd': PST_DRAGON
     };
 
+    // Material values for Impossible AI evaluation (centipawns)
+    const MATERIAL_VALUES = {
+        'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000,
+        's': 120, 'u': 350, 'a': 650, 'c': 800, 'd': 1300
+    };
 
-    /**
-     * =========================================================================
+    /* =========================================================================
      * GLOBAL GAME STATE VARIABLES
-     * =========================================================================
-     */
+     * ========================================================================= */
     let currentLang = 'id';
     
-    // Default starting inventory for both players in the Global Shop
-    const BASE_STOCK = { 'p': 8, 'n': 2, 'b': 2, 'r': 2, 'q': 1 };
+    const BASE_STOCK_STANDARD = { 'p': 8, 'n': 2, 'b': 2, 'r': 2, 'q': 1 };
+    const BASE_STOCK_CUSTOM = { 's': 8, 'u': 2, 'a': 2, 'c': 2, 'd': 1 };
     
-    // Time limit per turn in seconds
     const TURN_TIME_LIMIT = 30;
 
-    // 8x8 Grid representing the chess board.
     let board = Array(8).fill(null).map(() => Array(8).fill(null));
-    
-    // Turn Tracker ('w' for White, 'b' for Black)
     let turn = 'w';
-    
-    // Player Economy
     let banks = { w: 5.00, b: 5.00 };
-    
-    // Global Shop Inventory State
-    let inventory = { w: { ...BASE_STOCK }, b: { ...BASE_STOCK } };
-    
-    // Graveyard Array containing captured pieces and their cooldowns
+    let inventory = { w: { ...BASE_STOCK_STANDARD }, b: { ...BASE_STOCK_STANDARD } };
     let graveyard = []; 
     
-    // Configuration Variables
     let gameMode = 'local'; 
     let aiDifficulty = 'easy'; 
+    let customUnitsEnabled = false;
     
-    // State Flags
     let isAiThinking = false;
     let isGameOver = false;
     let isPaused = false;
 
-    // Player Designations
     let humanColor = 'w'; 
     let aiColor = null;   
 
-    // Timer Variables
     let timeRemaining = TURN_TIME_LIMIT;
     let timerIntervalId = null;
 
-    // User Interaction Variables
     let selectedSquare = null;
     let validMoves = [];
     let selectedShopType = null;
     let validSpawns = [];
     let pendingPromo = null;
-    let stallPlies = 0; // Tracks plies without pawn move or capture to avoid infinite games
+    let stallPlies = 0;
 
-    /**
-     * =========================================================================
+    // En Passant tracking: stores {r, c} of pawn that just double-moved, or null
+    let lastDoublePawnMove = null;
+
+    /* =========================================================================
      * EVENT LISTENERS
-     * =========================================================================
-     */
-    
-    // Bind Escape key to toggle pause menu
+     * ========================================================================= */
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             if (document.getElementById('game-screen').style.display === 'flex' && !isGameOver) {
@@ -1002,31 +1070,21 @@
         }
     });
 
-    /**
-     * Toggles the game pause state and handles overlay visibility.
-     */
+    /* =========================================================================
+     * CORE UI FUNCTIONS
+     * ========================================================================= */
     function togglePause() {
         if (isGameOver) return;
         isPaused = !isPaused;
-        const pauseOverlay = document.getElementById('pause-overlay');
-        pauseOverlay.style.display = isPaused ? 'flex' : 'none';
+        document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
     }
 
-    /**
-     * Changes the application's localization language and updates the UI immediately.
-     * @param {string} lang - The language code ('id' or 'en').
-     */
     function setLanguage(lang) {
         currentLang = lang;
-        
-        // Update Button Active States
         document.getElementById('lang-id').classList.toggle('active', lang === 'id');
         document.getElementById('lang-en').classList.toggle('active', lang === 'en');
         
-        // Fetch Strings
         const s = STRINGS[currentLang];
-        
-        // Update Menu UI
         document.querySelector('.subtitle').innerText = s.subtitle;
         document.getElementById('btn-local').innerHTML = s.modeLocal;
         document.getElementById('btn-ai').innerHTML = s.modeAi;
@@ -1036,101 +1094,69 @@
         document.getElementById('btn-back-modes').innerHTML = s.back;
         document.getElementById('text-difficulty').innerText = s.chooseDifficulty;
         document.getElementById('btn-back-colors').innerHTML = s.back;
-        
-        // Update Game UI Labels
         document.getElementById('label-bank-w').innerText = s.whiteBank;
         document.getElementById('label-bank-b').innerText = s.blackBank;
         document.getElementById('text-shop-title').innerText = s.shopTitle;
         document.getElementById('text-graveyard-title').innerText = s.graveyardTitle;
         document.getElementById('text-promo-title').innerText = s.promoTitle;
         document.getElementById('btn-restart').innerText = s.restart;
-        
-        // Update Pause Overlays
         document.getElementById('pause-title').innerText = s.pauseTitle;
         document.getElementById('btn-resume').innerText = s.resumeGame;
         document.getElementById('btn-main-menu').innerText = s.mainMenu;
 
-        // Re-render board if game is active
-        if (document.getElementById('game-screen').style.display === 'flex') {
-            render();
-        }
+        // Update custom toggle text
+        let toggleBtn = document.getElementById('btn-custom-toggle');
+        toggleBtn.innerHTML = `<span class="toggle-dot"></span> ${customUnitsEnabled ? s.customOn : s.customOff}`;
+
+        if (document.getElementById('game-screen').style.display === 'flex') render();
     }
 
-    /**
-     * Retrieves the localized display name of a piece.
-     * @param {string} type - The character code of the piece (e.g., 'p', 'n', 'r').
-     * @returns {string} The localized string.
-     */
     function getPieceName(type) {
-        return STRINGS[currentLang].pieces[type];
+        return STRINGS[currentLang].pieces[type] || type;
     }
 
-    /**
-     * Handles the selection of game mode from the Main Menu.
-     * @param {string} mode - 'local' or 'ai'.
-     */
+    function toggleCustomUnits() {
+        customUnitsEnabled = !customUnitsEnabled;
+        let btn = document.getElementById('btn-custom-toggle');
+        let s = STRINGS[currentLang];
+        btn.innerHTML = `<span class="toggle-dot"></span> ${customUnitsEnabled ? s.customOn : s.customOff}`;
+        btn.classList.toggle('active', customUnitsEnabled);
+    }
+
+    /* =========================================================================
+     * MENU NAVIGATION
+     * ========================================================================= */
     function selectMode(mode) {
         gameMode = mode;
         document.getElementById('step-modes').style.display = 'none';
         document.getElementById('step-colors').style.display = 'flex';
-        
-        const title = document.getElementById('color-title-text');
-        const randomBtn = document.getElementById('btn-random-color');
         const s = STRINGS[currentLang];
-        
-        if (mode === 'local') {
-            title.innerText = s.chooseColorP1;
-            randomBtn.style.display = 'block';
-        } else {
-            title.innerText = s.chooseColorVs;
-            randomBtn.style.display = 'block';
-        }
+        document.getElementById('color-title-text').innerText = mode === 'local' ? s.chooseColorP1 : s.chooseColorVs;
     }
 
-    /**
-     * Navigates back from Color Selection to Mode Selection.
-     */
     function backToModes() {
         document.getElementById('step-colors').style.display = 'none';
         document.getElementById('step-modes').style.display = 'flex';
     }
 
-    /**
-     * Handles the color selection by the human player.
-     * @param {string} chosenColor - 'w', 'b', or 'random'.
-     */
     function selectColor(chosenColor) {
-        if (chosenColor === 'random') {
-            humanColor = Math.random() < 0.5 ? 'w' : 'b';
-        } else {
-            humanColor = chosenColor;
-        }
-
+        humanColor = chosenColor === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : chosenColor;
         if (gameMode === 'local') {
-            // Local Mode starts immediately after color is picked
             document.getElementById('menu-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
             initGame();
         } else {
-            // AI Mode requires setting difficulty first
             aiColor = humanColor === 'w' ? 'b' : 'w';
             document.getElementById('step-colors').style.display = 'none';
             document.getElementById('step-difficulties').style.display = 'flex';
         }
     }
 
-    /**
-     * Navigates back from AI Difficulty Selection to Color Selection.
-     */
     function backToColors() {
         document.getElementById('step-difficulties').style.display = 'none';
         document.getElementById('step-colors').style.display = 'flex';
     }
 
-    /**
-     * Finalizes the AI startup sequence by setting difficulty and booting the engine.
-     * @param {string} difficulty - 'easy', 'normal', or 'hard'.
-     */
     function finalizeAiStart(difficulty) {
         aiDifficulty = difficulty;
         document.getElementById('menu-screen').style.display = 'none';
@@ -1138,72 +1164,66 @@
         initGame();
     }
 
-    /**
-     * Initializes a fresh game state, clears arrays, sets up Kings, and starts the timer.
-     */
+    /* =========================================================================
+     * GAME INITIALIZATION
+     * ========================================================================= */
     function initGame() {
-        // Reset Board Data Structure
         board = Array(8).fill(null).map(() => Array(8).fill(null));
-        
-        // Reset Flags
         isGameOver = false;
         isPaused = false;
         turn = 'w';
         stallPlies = 0;
+        lastDoublePawnMove = null;
         
-        // Setup Kings. Kings are free but give money when moved. 
-        // This is the core engine to prevent soft-locks.
+        // Setup Kings
         board[7][4] = { color: 'w', type: 'k', hasMoved: false }; 
         board[0][4] = { color: 'b', type: 'k', hasMoved: false }; 
+        
+        // Setup inventory based on custom units toggle
+        let stockTemplate = customUnitsEnabled ? BASE_STOCK_CUSTOM : BASE_STOCK_STANDARD;
+        inventory = { w: { ...stockTemplate }, b: { ...stockTemplate } };
+        banks = { w: 5.00, b: 5.00 };
+        graveyard = [];
         
         const s = STRINGS[currentLang];
         log(s.gameStarted);
         
+        if (customUnitsEnabled) {
+            let msg = currentLang === 'id' ? '⚡ Mode Custom Units aktif! Backstabber, Unicorn, Archbishop, Chancellor, Dragon tersedia.' : '⚡ Custom Units mode active! Backstabber, Unicorn, Archbishop, Chancellor, Dragon available.';
+            log(msg, 'log-alert');
+        }
+        
         if (gameMode === 'ai') {
-            let colorStr = humanColor === 'w' 
-                ? (currentLang === 'id' ? 'PUTIH (White)' : 'WHITE') 
-                : (currentLang === 'id' ? 'HITAM (Black)' : 'BLACK');
+            let colorStr = humanColor === 'w' ? (currentLang === 'id' ? 'PUTIH (White)' : 'WHITE') : (currentLang === 'id' ? 'HITAM (Black)' : 'BLACK');
             log(`${s.youHold} ${colorStr}.`);
             log(`${s.modeAiActive} (${aiDifficulty.toUpperCase()})!`);
         } else {
-            let p1Warna = humanColor === 'w' 
-                ? (currentLang === 'id' ? 'Putih' : 'White') 
-                : (currentLang === 'id' ? 'Hitam' : 'Black');
-            let p2Warna = humanColor === 'w' 
-                ? (currentLang === 'id' ? 'Hitam' : 'Black') 
-                : (currentLang === 'id' ? 'Putih' : 'White');
-            log(s.modeLocalActive.replace('{p1}', p1Warna).replace('{p2}', p2Warna));
+            let p1W = humanColor === 'w' ? (currentLang === 'id' ? 'Putih' : 'White') : (currentLang === 'id' ? 'Hitam' : 'Black');
+            let p2W = humanColor === 'w' ? (currentLang === 'id' ? 'Hitam' : 'Black') : (currentLang === 'id' ? 'Putih' : 'White');
+            log(s.modeLocalActive.replace('{p1}', p1W).replace('{p2}', p2W));
         }
         
-        // Draw the initial board
         render();
-        
-        // Initiate the global countdown timer
         startTimer();
 
-        // If the AI is White, it must make the first move immediately
         if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
             setTimeout(processAiTurn, 800);
         }
     }
 
-    /**
-     * Initializes or resets the global turn timer.
-     */
+    /* =========================================================================
+     * TIMER SYSTEM
+     * ========================================================================= */
     function startTimer() {
         if (isGameOver) return;
-        
         clearInterval(timerIntervalId);
         timeRemaining = TURN_TIME_LIMIT;
         updateTimerUI();
-
         timerIntervalId = setInterval(() => {
-            if (isPaused) return; // Freeze timer if paused
-            
+            if (isPaused) return;
             timeRemaining--;
             updateTimerUI();
-
             if (timeRemaining <= 0) {
                 clearInterval(timerIntervalId);
                 triggerTimeout();
@@ -1211,77 +1231,52 @@
         }, 1000);
     }
 
-    /**
-     * Updates the HTML elements representing the timer.
-     */
     function updateTimerUI() {
-        const timerBadge = document.getElementById('timer-display');
-        timerBadge.innerText = `${timeRemaining}s`;
-        
-        // Add visual urgency if time is running low
+        const badge = document.getElementById('timer-display');
+        badge.innerText = `${timeRemaining}s`;
         if (timeRemaining <= 7) {
-            timerBadge.parentElement.style.backgroundColor = '#ff1744'; // Bright red
-            timerBadge.parentElement.style.animation = 'pulse 1s infinite';
+            badge.parentElement.style.backgroundColor = '#ff1744';
+            badge.parentElement.style.animation = 'pulse 1s infinite';
         } else {
-            timerBadge.parentElement.style.backgroundColor = 'var(--danger)'; // Standard
-            timerBadge.parentElement.style.animation = 'none';
+            badge.parentElement.style.backgroundColor = 'var(--danger)';
+            badge.parentElement.style.animation = 'none';
         }
     }
 
-    /**
-     * Ends the game specifically due to a timeout.
-     */
     function triggerTimeout() {
         if (isGameOver) return;
         const s = STRINGS[currentLang];
-        
-        if (turn === 'w') {
-            endGame(s.timeoutTitle, s.timeoutWhite);
-        } else if (gameMode === 'ai') {
-            endGame(s.timeoutTitle, s.timeoutBot);
-        } else {
-            endGame(s.timeoutTitle, s.timeoutBlack);
-        }
+        if (turn === 'w') endGame(s.timeoutTitle, s.timeoutWhite);
+        else if (gameMode === 'ai') endGame(s.timeoutTitle, s.timeoutBot);
+        else endGame(s.timeoutTitle, s.timeoutBlack);
     }
 
-    /**
-     * Ends the current player's turn, processes graveyard cooldowns, 
-     * checks for checkmate/stalemate, and switches control to the opponent.
-     */
+    /* =========================================================================
+     * TURN MANAGEMENT
+     * ========================================================================= */
     function switchTurn() {
         if (isGameOver) return;
-        
-        // Toggle Turn variable
         turn = turn === 'w' ? 'b' : 'w';
         const s = STRINGS[currentLang];
         
         // Process Graveyard Cooldowns
         let activeGrave = [];
         for (let item of graveyard) {
-            // Decrease cooldown if it's the piece's owner's new turn
-            if (item.color === turn) {
-                item.turnsLeft--;
-            }
-            
-            // Check if cooldown is finished
+            if (item.color === turn) item.turnsLeft--;
             if (item.turnsLeft <= 0) {
-                // Return to Inventory
                 inventory[item.color][item.type]++;
-                
-                // Construct Log Message
-                let pieceName = getPieceName(item.type);
+                let pName = getPieceName(item.type);
                 let msg = currentLang === 'id' 
-                    ? `Unit ${pieceName} (${item.color.toUpperCase()}) selesai cooldown & kembali ke toko.`
-                    : `Unit ${pieceName} (${item.color.toUpperCase()}) finished cooldown & returned to shop.`;
+                    ? `Unit ${pName} (${item.color.toUpperCase()}) selesai cooldown & kembali ke toko.`
+                    : `Unit ${pName} (${item.color.toUpperCase()}) finished cooldown & returned to shop.`;
                 log(msg, 'log-alert');
             } else {
-                // Keep in graveyard
                 activeGrave.push(item);
             }
         }
         graveyard = activeGrave;
 
-        // Check 30 Plies Stalemate Rule
+        // Stalemate counter
         stallPlies++;
         if (stallPlies >= 30) {
             let titleStr = currentLang === 'id' ? "GAME SERI!" : "STALEMATE!";
@@ -1289,173 +1284,443 @@
             return;
         }
 
-        // Check for Game Over States (Checkmate or No Actions)
+        // Check for checkmate / stalemate
         let inCheck = isKingInCheck(turn, board);
         let hasActions = playerHasAnyLegalActions(turn);
 
         if (inCheck) {
             if (!hasActions) {
-                // Checkmate
-                if (turn === 'w') {
-                    endGame(s.checkmateTitle, s.checkmateWhite);
-                } else {
-                    endGame(s.checkmateTitle, s.checkmateBlack);
-                }
+                if (turn === 'w') endGame(s.checkmateTitle, s.checkmateWhite);
+                else endGame(s.checkmateTitle, s.checkmateBlack);
                 return;
             } else {
-                // Just Check
                 let colorName = turn === 'w' ? 'White' : 'Black';
                 log(s.kingInCheck.replace('{color}', colorName), 'log-alert');
             }
         } else if (!hasActions) {
-            // Stalemate (No Check, but no moves or money)
             let titleStr = currentLang === 'id' ? "STALEMATE (SERI)!" : "STALEMATE!";
             endGame(titleStr, s.noLegalActions);
             return;
         }
 
-        // Proceed to next turn
         render();
         startTimer();
 
-        // If it's the AI's turn, trigger the engine
         if (gameMode === 'ai' && turn === aiColor) {
             isAiThinking = true;
-            // Fake delay for human-like feeling
-            setTimeout(processAiTurn, 700);
+            setTimeout(processAiTurn, aiDifficulty === 'impossible' ? 200 : 700);
         }
     }
 
-    /**
-     * Retrieves the positional value of a piece using the PST.
-     * Automatically adjusts for perspective (White vs Black).
-     * @param {string} type - Piece type.
-     * @param {string} color - Piece owner.
-     * @param {number} r - Row index.
-     * @param {number} c - Col index.
-     * @returns {number} The positional score.
-     */
-    function getPSTValue(type, color, r, c) {
-        if (!AI_PST[type]) return 0;
+    /* =========================================================================
+     * PSEUDO-LEGAL MOVE GENERATION
+     * Generates moves ignoring king safety. Supports all piece types.
+     * overrideColor: used for Backstabbers to set movement direction
+     * ========================================================================= */
+    function getPseudoMoves(r, c, b, overrideColor) {
+        let p = b[r][c];
+        if (!p) return [];
+        let myColor = overrideColor || p.color;
+        let side = myColor === 'w' ? -1 : 1;
+        let list = [];
+
+        // Helper: push if in-bounds, returns true if empty (for sliding)
+        let pushSafe = (tr, tc) => {
+            if (tr < 0 || tr > 7 || tc < 0 || tc > 7) return false;
+            if (!b[tr][tc]) { list.push({r: tr, c: tc}); return true; }
+            if (b[tr][tc].color !== myColor) list.push({r: tr, c: tc});
+            return false;
+        };
+
+        // Helper: slide in directions until blocked
+        let slide = (vectors) => {
+            for (let v of vectors) {
+                let tr = r + v[0], tc = c + v[1];
+                while (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
+                    if (!b[tr][tc]) { list.push({r: tr, c: tc}); }
+                    else {
+                        if (b[tr][tc].color !== myColor) list.push({r: tr, c: tc});
+                        break;
+                    }
+                    tr += v[0]; tc += v[1];
+                }
+            }
+        };
+
+        // Helper: knight-style jumps
+        let knightJumps = () => {
+            for (let j of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]])
+                pushSafe(r+j[0], c+j[1]);
+        };
+
+        switch (p.type) {
+            case 'p': // Standard Pawn
+            case 's': // Backstabber (pawn-like)
+            {
+                // Forward movement
+                let fr = r + side;
+                if (fr >= 0 && fr < 8 && !b[fr][c]) {
+                    list.push({r: fr, c: c});
+                    // Double push
+                    let fr2 = r + side * 2;
+                    if (!p.hasMoved && fr2 >= 0 && fr2 < 8 && !b[fr2][c]) {
+                        list.push({r: fr2, c: c});
+                    }
+                }
+                // Diagonal captures
+                for (let dc of [-1, 1]) {
+                    let nc = c + dc;
+                    if (nc < 0 || nc > 7 || fr < 0 || fr > 7) continue;
+                    if (b[fr][nc] && b[fr][nc].color !== myColor) {
+                        list.push({r: fr, c: nc});
+                    }
+                    // En Passant
+                    if (lastDoublePawnMove && lastDoublePawnMove.r === r && lastDoublePawnMove.c === nc) {
+                        let epTarget = b[r][nc];
+                        if (epTarget && (epTarget.type === 'p' || epTarget.type === 's') && epTarget.color !== myColor && !b[fr][nc]) {
+                            list.push({r: fr, c: nc, enPassant: true});
+                        }
+                    }
+                }
+                break;
+            }
+
+            case 'n': // Knight
+                knightJumps();
+                break;
+
+            case 'u': // Unicorn: 3+2 L-jump
+                for (let j of [[-3,-2],[-3,2],[-2,-3],[-2,3],[2,-3],[2,3],[3,-2],[3,2]])
+                    pushSafe(r+j[0], c+j[1]);
+                break;
+
+            case 'b': // Bishop
+                slide([[-1,-1],[-1,1],[1,-1],[1,1]]);
+                break;
+
+            case 'a': // Archbishop: Bishop + Knight
+                slide([[-1,-1],[-1,1],[1,-1],[1,1]]);
+                knightJumps();
+                break;
+
+            case 'r': // Rook
+                slide([[-1,0],[1,0],[0,-1],[0,1]]);
+                break;
+
+            case 'c': // Chancellor: Rook + Knight
+                slide([[-1,0],[1,0],[0,-1],[0,1]]);
+                knightJumps();
+                break;
+
+            case 'q': // Queen
+                slide([[-1,-1],[-1,1],[1,-1],[1,1],[-1,0],[1,0],[0,-1],[0,1]]);
+                break;
+
+            case 'd': // Dragon: Queen + Knight
+                slide([[-1,-1],[-1,1],[1,-1],[1,1],[-1,0],[1,0],[0,-1],[0,1]]);
+                knightJumps();
+                break;
+
+            case 'k': // King (single step all directions)
+                for (let s of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]])
+                    pushSafe(r+s[0], c+s[1]);
+                break;
+        }
+
+        return list;
+    }
+
+    /* =========================================================================
+     * CASTLING MOVE GENERATION
+     * Modified rules: Only Rook must not have moved. King CAN have moved.
+     * Also supports Chancellor (type 'c') in Rook's position.
+     * ========================================================================= */
+    function getCastlingMoves(color, b) {
+        let moves = [];
+        let homeRank = color === 'w' ? 7 : 0;
         
-        let table = AI_PST[type];
-        // If Black, reverse the row to evaluate from Black's perspective
-        let evalRow = color === 'w' ? r : (7 - r);
+        // King must currently be at e-file (column 4) on home rank
+        let king = b[homeRank][4];
+        if (!king || king.type !== 'k' || king.color !== color) return moves;
         
-        return table[evalRow][c] || 0;
+        // King must not be in check
+        if (isKingInCheck(color, b)) return moves;
+        
+        let oppColor = color === 'w' ? 'b' : 'w';
+
+        // Kingside castling: Rook/Chancellor at h-file (col 7)
+        let kRook = b[homeRank][7];
+        if (kRook && (kRook.type === 'r' || kRook.type === 'c') && kRook.color === color && !kRook.hasMoved) {
+            if (!b[homeRank][5] && !b[homeRank][6]) {
+                if (!isSquareAttackedBy(oppColor, homeRank, 5, b) && !isSquareAttackedBy(oppColor, homeRank, 6, b)) {
+                    moves.push({r: homeRank, c: 6, castling: 'kingside'});
+                }
+            }
+        }
+
+        // Queenside castling: Rook/Chancellor at a-file (col 0)
+        let qRook = b[homeRank][0];
+        if (qRook && (qRook.type === 'r' || qRook.type === 'c') && qRook.color === color && !qRook.hasMoved) {
+            if (!b[homeRank][1] && !b[homeRank][2] && !b[homeRank][3]) {
+                if (!isSquareAttackedBy(oppColor, homeRank, 2, b) && !isSquareAttackedBy(oppColor, homeRank, 3, b)) {
+                    moves.push({r: homeRank, c: 2, castling: 'queenside'});
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    /* =========================================================================
+     * SPAWN SQUARE CALCULATION
+     * ========================================================================= */
+    function getSpawnSquares(type, color) {
+        let homeRank = color === 'w' ? 7 : 0;
+        let pawnRank = color === 'w' ? 6 : 1;
+        let raw = [];
+
+        switch (type) {
+            case 'p': case 's': // Pawn / Backstabber → pawn rank
+                for (let i = 0; i < 8; i++) raw.push({r: pawnRank, c: i});
+                break;
+            case 'r': case 'c': // Rook / Chancellor → rook positions
+                raw.push({r: homeRank, c: 0}, {r: homeRank, c: 7});
+                break;
+            case 'n': case 'u': // Knight / Unicorn → knight positions
+                raw.push({r: homeRank, c: 1}, {r: homeRank, c: 6});
+                break;
+            case 'b': case 'a': // Bishop / Archbishop → bishop positions
+                raw.push({r: homeRank, c: 2}, {r: homeRank, c: 5});
+                break;
+            case 'q': case 'd': // Queen / Dragon → queen position
+                raw.push({r: homeRank, c: 3});
+                break;
+        }
+
+        return raw.filter(s => !board[s.r][s.c] && !buyLeavesKingInCheck(type, s.r, s.c, color, board));
+    }
+
+    /* =========================================================================
+     * CHECK DETECTION
+     * ========================================================================= */
+    function isKingInCheck(color, b) {
+        let kr = -1, kc = -1;
+        for (let r = 0; r < 8; r++)
+            for (let c = 0; c < 8; c++)
+                if (b[r][c] && b[r][c].type === 'k' && b[r][c].color === color) { kr = r; kc = c; }
+        if (kr === -1) return false;
+        return isSquareAttackedBy(color === 'w' ? 'b' : 'w', kr, kc, b);
     }
 
     /**
-     * Evaluates a potential action (Move or Buy) for the AI.
-     * Incorporates positional logic, economics, sacrifice logic, and danger avoidance.
-     * @param {Object} act - Action Object {type, from, to, pieceType}.
-     * @param {string} myColor - AI's color.
-     * @param {string} oppColor - Human's color.
-     * @param {string} diff - Difficulty string.
-     * @returns {number} An integer representing the desirability of the move.
+     * Checks if attackerColor can attack square (tr, tc).
+     * Special handling for Backstabbers: they can be used by EITHER side,
+     * so enemy backstabbers also count as potential attackers.
      */
+    function isSquareAttackedBy(attackerColor, tr, tc, b) {
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                let piece = b[r][c];
+                if (!piece) continue;
+
+                if (piece.color === attackerColor) {
+                    // Standard attack check
+                    let moves = getPseudoMoves(r, c, b);
+                    if (moves.some(m => m.r === tr && m.c === tc)) return true;
+                } else if (piece.type === 's') {
+                    // Enemy Backstabber: can be moved by attackerColor
+                    let moves = getPseudoMoves(r, c, b, attackerColor);
+                    if (moves.some(m => m.r === tr && m.c === tc)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Simulates a move and checks if it leaves the king in check.
+     * Handles en passant capture and castling rook movement.
+     */
+    function moveLeavesKingInCheck(fr, fc, tr, tc, color, b) {
+        let nextB = b.map(row => [...row]);
+        let piece = nextB[fr][fc];
+        
+        // For backstabber, temporarily treat as mover's color for check purposes
+        if (piece && piece.type === 's' && piece.color !== color) {
+            piece = { ...piece, color: color };
+        }
+        
+        nextB[tr][tc] = piece;
+        nextB[fr][fc] = null;
+        
+        // En passant: pawn/backstabber captures diagonally to empty square
+        if (piece && (piece.type === 'p' || piece.type === 's') && fc !== tc && !b[tr][tc]) {
+            nextB[fr][tc] = null;
+        }
+        
+        // Castling: also move the rook
+        if (piece && piece.type === 'k' && Math.abs(tc - fc) === 2) {
+            if (tc === 6) { nextB[fr][5] = nextB[fr][7]; nextB[fr][7] = null; }
+            else if (tc === 2) { nextB[fr][3] = nextB[fr][0]; nextB[fr][0] = null; }
+        }
+        
+        return isKingInCheck(color, nextB);
+    }
+
+    function buyLeavesKingInCheck(type, tr, tc, color, b) {
+        let nextB = b.map(row => [...row]);
+        nextB[tr][tc] = { color: color, type: type, hasMoved: false };
+        return isKingInCheck(color, nextB);
+    }
+
+    /* =========================================================================
+     * LEGAL ACTION GENERATION
+     * ========================================================================= */
+    function getAllLegalActions(color) {
+        let list = [];
+        let shopTypes = customUnitsEnabled ? ['s','u','a','c','d'] : ['p','n','b','r','q'];
+        
+        // Board moves
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                let piece = board[r][c];
+                if (!piece) continue;
+                // Allow own pieces + any backstabber
+                if (piece.color !== color && piece.type !== 's') continue;
+                
+                let overrideColor = (piece.type === 's' && piece.color !== color) ? color : undefined;
+                
+                let cost = PIECES[piece.type].move;
+                if ((piece.type === 'p' || piece.type === 's') && !piece.hasMoved) cost = 0;
+                if (piece.type !== 'k' && banks[color] < cost) continue;
+
+                let pseudos = getPseudoMoves(r, c, board, overrideColor);
+                
+                for (let m of pseudos) {
+                    // Promotion affordability check
+                    if ((piece.type === 'p' || piece.type === 's') && (m.r === 0 || m.r === 7)) {
+                        let simBank = banks[color] - cost;
+                        if (board[m.r][m.c]) simBank += PIECES[board[m.r][m.c].type].price;
+                        if (simBank < 1.00) continue;
+                    }
+                    
+                    if (!moveLeavesKingInCheck(r, c, m.r, m.c, color, board)) {
+                        list.push({ type: 'move', from: {r, c}, to: m });
+                    }
+                }
+                
+                // Castling moves for King
+                if (piece.type === 'k' && piece.color === color) {
+                    let castleMoves = getCastlingMoves(color, board);
+                    for (let cm of castleMoves) {
+                        if (!moveLeavesKingInCheck(r, c, cm.r, cm.c, color, board)) {
+                            list.push({ type: 'move', from: {r, c}, to: cm });
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Shop spawns
+        shopTypes.forEach(t => {
+            if (inventory[color][t] > 0 && banks[color] >= PIECES[t].price) {
+                let spawns = getSpawnSquares(t, color);
+                for (let s of spawns) {
+                    list.push({ type: 'buy', pieceType: t, to: s });
+                }
+            }
+        });
+        
+        return list;
+    }
+
+    function playerHasAnyLegalActions(color) {
+        return getAllLegalActions(color).length > 0;
+    }
+
+    /* =========================================================================
+     * AI: EVALUATION FUNCTIONS
+     * ========================================================================= */
+    function getPSTValue(type, color, r, c) {
+        if (!AI_PST[type]) return 0;
+        let evalRow = color === 'w' ? r : (7 - r);
+        return AI_PST[type][evalRow][c] || 0;
+    }
+
     function evaluateAction(act, myColor, oppColor, diff) {
         let score = 0;
-        
-        // Deep copy the board for mental simulation
         let simulatedBoard = board.map(row => [...row]);
 
         if (act.type === 'move') {
             let p = simulatedBoard[act.from.r][act.from.c];
             let target = simulatedBoard[act.to.r][act.to.c];
             
-            // Execute simulated movement
             simulatedBoard[act.to.r][act.to.c] = p;
             simulatedBoard[act.from.r][act.from.c] = null;
 
-            // Base Reward: Eating an enemy piece gives massive points based on market value
-            if (target) {
-                score += PIECES[target.type].price * 15; 
+            // En passant capture in simulation
+            if ((p.type === 'p' || p.type === 's') && act.from.c !== act.to.c && !target) {
+                let epPawn = board[act.from.r][act.to.c];
+                if (epPawn) {
+                    score += PIECES[epPawn.type].price * 15;
+                    simulatedBoard[act.from.r][act.to.c] = null;
+                }
             }
 
-            // Post-Movement Board Analysis
-            let checksOpponent = isKingInCheck(oppColor, simulatedBoard);
-            if (checksOpponent) score += 30; 
+            if (target) score += PIECES[target.type].price * 15;
 
-            // Threat Analysis: Will the piece die if it goes here?
+            let checksOpponent = isKingInCheck(oppColor, simulatedBoard);
+            if (checksOpponent) score += 30;
+
             let isNowAttacked = isSquareAttackedBy(oppColor, act.to.r, act.to.c, simulatedBoard);
             
-            // HARD DIFFICULTY LOGIC - TACTICS, SACRIFICES, PST
-            if (diff === 'hard') {
-                // Apply Piece-Square Table Positional Advantage
+            if (diff === 'hard' || diff === 'impossible') {
                 let oldPosVal = getPSTValue(p.type, myColor, act.from.r, act.from.c);
                 let newPosVal = getPSTValue(p.type, myColor, act.to.r, act.to.c);
-                score += (newPosVal - oldPosVal) * 0.5; // Factor in positional growth
+                score += (newPosVal - oldPosVal) * (diff === 'impossible' ? 0.8 : 0.5);
 
                 if (isNowAttacked) {
                     if (target && PIECES[target.type].price >= PIECES[p.type].price) {
-                        // Profitable Trade (e.g., losing a Knight to kill a Queen)
-                        score += 5; 
+                        score += 5;
                     } else if (checksOpponent && PIECES[p.type].price <= 3.0) {
-                        // SACRIFICE PLAY: Willingly lose a cheap piece (Pawn/Knight/Bishop) 
-                        // if it means delivering a Check to apply pressure.
                         score += 15;
                     } else {
-                        // Terrible Blunder: Moving into death without compensation
                         score -= PIECES[p.type].price * 25;
                     }
                 } else {
-                    // Safe move
                     score += 5;
-                    // Encourage pawn marching towards promotion
-                    if (p.type === 'p') score += 8;
+                    if (p.type === 'p' || p.type === 's') score += 8;
                 }
 
-                // Evasion Logic: Rewarded for rescuing a piece currently in danger
                 let wasAttacked = isSquareAttackedBy(oppColor, act.from.r, act.from.c, board);
-                if (wasAttacked && !isNowAttacked) {
-                    score += PIECES[p.type].price * 20; 
-                }
+                if (wasAttacked && !isNowAttacked) score += PIECES[p.type].price * 20;
 
-                // Economy Management: Do not farm King excessively if already wealthy
                 if (p.type === 'k') {
-                    if (banks[myColor] < 1.50) {
-                        score += 15; // Farm money to survive
-                    } else if (banks[myColor] > 6.00) {
-                        score -= 20; // Stop moving the King and develop pieces
-                    }
+                    if (banks[myColor] < 1.50) score += 15;
+                    else if (banks[myColor] > 6.00) score -= 20;
                 }
 
-            // NORMAL DIFFICULTY LOGIC - SAFE PLAY
+                // Castling bonus
+                if (act.to.castling) score += 35;
+
             } else if (diff === 'normal') {
-                if (isNowAttacked) {
-                    // Heavily penalize moving into danger
-                    score -= PIECES[p.type].price * 15; 
-                }
-                
-                // Prevent wandering kings
-                if (p.type === 'k' && banks[myColor] > 2.0) {
-                    score -= 15;
-                }
+                if (isNowAttacked) score -= PIECES[p.type].price * 15;
+                if (p.type === 'k' && banks[myColor] > 2.0) score -= 15;
             }
 
         } else if (act.type === 'buy') {
-            // Evaluates buying/spawning a piece from the shop
             score += PIECES[act.pieceType].price * 3;
             simulatedBoard[act.to.r][act.to.c] = { color: myColor, type: act.pieceType, hasMoved: false };
 
             let isNowAttacked = isSquareAttackedBy(oppColor, act.to.r, act.to.c, simulatedBoard);
             let checksOpponent = isKingInCheck(oppColor, simulatedBoard);
 
-            if (diff === 'hard') {
-                // Apply PST to spawns (e.g. better to spawn knights near center files)
+            if (diff === 'hard' || diff === 'impossible') {
                 let posVal = getPSTValue(act.pieceType, myColor, act.to.r, act.to.c);
                 score += posVal * 0.4;
-
-                if (checksOpponent) score += 40; // Spawning directly into a check is devastating
-                
-                // Do not throw money away on useless spawns
-                if (isNowAttacked) {
-                    score -= PIECES[act.pieceType].price * 15;
-                }
-                
-                // Do not bankrupt yourself unless buying a Queen
-                if (banks[myColor] - PIECES[act.pieceType].price < 1.0 && act.pieceType !== 'q') {
+                if (checksOpponent) score += 40;
+                if (isNowAttacked) score -= PIECES[act.pieceType].price * 15;
+                if (banks[myColor] - PIECES[act.pieceType].price < 1.0 && act.pieceType !== 'q' && act.pieceType !== 'd') {
                     score -= 20;
                 }
             } else if (diff === 'normal') {
@@ -1466,53 +1731,204 @@
         return score;
     }
 
-    /**
-     * Executes the AI's turn by generating legal moves, scoring them, 
-     * filtering based on difficulty constraints, and executing the choice.
-     */
+    /* =========================================================================
+     * AI: IMPOSSIBLE MODE - MINIMAX WITH ALPHA-BETA PRUNING
+     * ========================================================================= */
+    function impossibleStaticEval(bState, myColor) {
+        let score = 0;
+        let oppColor = myColor === 'w' ? 'b' : 'w';
+
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                let p = bState[r][c];
+                if (!p) continue;
+
+                let mat = MATERIAL_VALUES[p.type] || 0;
+                let pst = getPSTValue(p.type, p.color, r, c);
+
+                if (p.color === myColor) {
+                    score += mat + pst;
+                } else if (p.type === 's') {
+                    // Backstabber: partially count against (either side can use)
+                    score -= mat * 0.3;
+                } else {
+                    score -= mat + pst;
+                }
+
+                // Center control bonus
+                if (r >= 2 && r <= 5 && c >= 2 && c <= 5) {
+                    let bonus = (r >= 3 && r <= 4 && c >= 3 && c <= 4) ? 15 : 5;
+                    score += p.color === myColor ? bonus : (p.type === 's' ? 0 : -bonus);
+                }
+            }
+        }
+
+        return score;
+    }
+
+    function getMinimaxMoves(color, bState) {
+        let list = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                let piece = bState[r][c];
+                if (!piece) continue;
+                if (piece.color !== color && piece.type !== 's') continue;
+
+                let overrideColor = (piece.type === 's' && piece.color !== color) ? color : undefined;
+                let pseudos = getPseudoMoves(r, c, bState, overrideColor);
+
+                for (let m of pseudos) {
+                    if (!moveLeavesKingInCheck(r, c, m.r, m.c, color, bState)) {
+                        list.push({fr: r, fc: c, tr: m.r, tc: m.c});
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    function applyMoveOnBoard(bState, m) {
+        let nb = bState.map(row => [...row]);
+        let piece = nb[m.fr][m.fc];
+        nb[m.tr][m.tc] = piece;
+        nb[m.fr][m.fc] = null;
+
+        // En passant capture
+        if (piece && (piece.type === 'p' || piece.type === 's') && m.fc !== m.tc && !bState[m.tr][m.tc]) {
+            nb[m.fr][m.tc] = null;
+        }
+        // Castling rook movement
+        if (piece && piece.type === 'k' && Math.abs(m.tc - m.fc) === 2) {
+            if (m.tc === 6) { nb[m.fr][5] = nb[m.fr][7]; nb[m.fr][7] = null; }
+            else if (m.tc === 2) { nb[m.fr][3] = nb[m.fr][0]; nb[m.fr][0] = null; }
+        }
+        return nb;
+    }
+
+    function impossibleMinimax(bState, depth, alpha, beta, isMaximizing, myColor, oppColor) {
+        if (depth === 0) return impossibleStaticEval(bState, myColor);
+
+        let currentColor = isMaximizing ? myColor : oppColor;
+        let moves = getMinimaxMoves(currentColor, bState);
+
+        if (moves.length === 0) {
+            if (isKingInCheck(currentColor, bState)) {
+                return isMaximizing ? -99999 + (3 - depth) : 99999 - (3 - depth);
+            }
+            return 0; // Stalemate
+        }
+
+        // Move ordering: captures first (improves alpha-beta efficiency)
+        moves.sort((a, b) => {
+            let aV = bState[a.tr][a.tc] ? (MATERIAL_VALUES[bState[a.tr][a.tc].type] || 0) : 0;
+            let bV = bState[b.tr][b.tc] ? (MATERIAL_VALUES[bState[b.tr][b.tc].type] || 0) : 0;
+            return bV - aV;
+        });
+
+        if (isMaximizing) {
+            let maxEval = -Infinity;
+            for (let m of moves) {
+                let nb = applyMoveOnBoard(bState, m);
+                let ev = impossibleMinimax(nb, depth - 1, alpha, beta, false, myColor, oppColor);
+                if (ev > maxEval) maxEval = ev;
+                if (ev > alpha) alpha = ev;
+                if (beta <= alpha) break;
+            }
+            return maxEval;
+        } else {
+            let minEval = Infinity;
+            for (let m of moves) {
+                let nb = applyMoveOnBoard(bState, m);
+                let ev = impossibleMinimax(nb, depth - 1, alpha, beta, true, myColor, oppColor);
+                if (ev < minEval) minEval = ev;
+                if (ev < beta) beta = ev;
+                if (beta <= alpha) break;
+            }
+            return minEval;
+        }
+    }
+
+    /* =========================================================================
+     * AI: TURN PROCESSING
+     * ========================================================================= */
     function processAiTurn() {
-        // Block if not allowed to think or game paused
         if (!isAiThinking || isGameOver || isPaused) {
-            if(isPaused) setTimeout(processAiTurn, 500);
-            return; 
+            if (isPaused) setTimeout(processAiTurn, 500);
+            return;
         }
         isAiThinking = false;
 
         let actions = getAllLegalActions(aiColor);
-        if (actions.length === 0) return; // Should be caught by switchTurn Stalemate check
-
-        // 1. Evaluate all possibilities
-        actions.forEach(act => {
-            act.score = evaluateAction(act, aiColor, humanColor, aiDifficulty);
-        });
-
-        // 2. Sort Highest Score (Best) -> Lowest Score (Worst)
-        actions.sort((a, b) => b.score - a.score);
+        if (actions.length === 0) return;
 
         let chosen = null;
 
-        // 3. Apply Difficulty Persona
-        if (aiDifficulty === 'easy') {
-            // EASY: Prone to blunders.
-            // 40% chance to completely ignore its top 3 best moves.
-            if (Math.random() < 0.4 && actions.length > 3) {
-                let badMoves = actions.slice(3); 
-                chosen = badMoves[Math.floor(Math.random() * badMoves.length)];
-            } else {
-                chosen = actions[Math.floor(Math.random() * actions.length)]; // Pure Random
+        if (aiDifficulty === 'impossible') {
+            // Phase 1: Quick eval to find top candidates
+            actions.forEach(act => {
+                act.quickScore = evaluateAction(act, aiColor, humanColor, 'hard');
+            });
+            actions.sort((a, b) => b.quickScore - a.quickScore);
+
+            let candidates = actions.slice(0, Math.min(12, actions.length));
+            let bestScore = -Infinity;
+
+            // Phase 2: Deep minimax on top candidates
+            for (let act of candidates) {
+                let score;
+                if (act.type === 'move') {
+                    let m = {fr: act.from.r, fc: act.from.c, tr: act.to.r, tc: act.to.c};
+                    let nb = applyMoveOnBoard(board, m);
+
+                    // Adaptive depth based on piece count
+                    let pc = 0;
+                    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (nb[r][c]) pc++;
+                    let depth = pc > 10 ? 2 : 3;
+
+                    score = impossibleMinimax(nb, depth, -Infinity, Infinity, false, aiColor, humanColor);
+
+                    // Bonus for captures at root level
+                    let target = board[act.to.r][act.to.c];
+                    if (target) score += MATERIAL_VALUES[target.type] * 2;
+                    
+                    // En passant bonus
+                    if (act.to.enPassant) score += 200;
+                    
+                    // Castling bonus
+                    if (act.to.castling) score += 500;
+                } else {
+                    score = act.quickScore * 8;
+                }
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    chosen = act;
+                }
             }
-        } else if (aiDifficulty === 'normal') {
-            // NORMAL: Plays safe.
-            // Pick a random move from its top 3 safe moves to add variety without blundering.
-            let pool = actions.slice(0, Math.min(3, actions.length));
-            chosen = pool[Math.floor(Math.random() * pool.length)];
         } else {
-            // HARD: Cold, calculating, tactical.
-            // Always take the move with the absolute highest mathematical advantage.
-            chosen = actions[0];
+            // Easy / Normal / Hard
+            actions.forEach(act => {
+                act.score = evaluateAction(act, aiColor, humanColor, aiDifficulty);
+            });
+            actions.sort((a, b) => b.score - a.score);
+
+            if (aiDifficulty === 'easy') {
+                if (Math.random() < 0.4 && actions.length > 3) {
+                    let bad = actions.slice(3);
+                    chosen = bad[Math.floor(Math.random() * bad.length)];
+                } else {
+                    chosen = actions[Math.floor(Math.random() * actions.length)];
+                }
+            } else if (aiDifficulty === 'normal') {
+                let pool = actions.slice(0, Math.min(3, actions.length));
+                chosen = pool[Math.floor(Math.random() * pool.length)];
+            } else { // hard
+                chosen = actions[0];
+            }
         }
 
-        // 4. Execute the chosen action
+        if (!chosen) chosen = actions[0];
+
         if (chosen.type === 'move') {
             executeMove(chosen.from.r, chosen.from.c, chosen.to.r, chosen.to.c);
         } else if (chosen.type === 'buy') {
@@ -1520,175 +1936,105 @@
         }
     }
 
-    /**
-     * Gathers every single legal action a player can make on the board or in the shop.
-     * Used for both AI thinking and checking for Stalemate conditions.
-     * @param {string} color - The player color.
-     * @returns {Array} List of legal action objects.
-     */
-    function getAllLegalActions(color) {
-        let list = [];
-        
-        // Check Board Moves
-        for (let r = 0; r < 8; r++) {
-            for (let c = 0; c < 8; c++) {
-                if (board[r][c] && board[r][c].color === color) {
-                    let cost = PIECES[board[r][c].type].move;
-                    
-                    // First pawn move is free
-                    if (board[r][c].type === 'p' && !board[r][c].hasMoved) cost = 0;
-                    
-                    // Skip piece entirely if player can't afford movement cost
-                    if (board[r][c].type !== 'k' && banks[color] < cost) continue;
-
-                    let pseudos = getPseudoMoves(r, c, board);
-                    
-                    pseudos.forEach(m => {
-                        // Promotion Edge Case: Need $1.00 extra to promote safely
-                        if (board[r][c].type === 'p' && (m.r === 0 || m.r === 7)) {
-                            let simulatedBank = banks[color] - cost;
-                            if (board[m.r][m.c]) simulatedBank += PIECES[board[m.r][m.c].type].price; 
-                            if (simulatedBank < 1.00) return; 
-                        }
-                        
-                        // Check if move leaves own king in check
-                        if (!moveLeavesKingInCheck(r, c, m.r, m.c, color, board)) {
-                            list.push({ type: 'move', from: {r, c}, to: m });
-                        }
-                    });
-                }
-            }
-        }
-        
-        // Check Shop Spawns
-        ['p','n','b','r','q'].forEach(t => {
-            if (inventory[color][t] > 0 && banks[color] >= PIECES[t].price) {
-                let spawns = getSpawnSquares(t, color);
-                spawns.forEach(s => {
-                    list.push({ type: 'buy', pieceType: t, to: s });
-                });
-            }
-        });
-        
-        return list;
-    }
-
-    /**
-     * Checks if a player has any valid moves left.
-     * @param {string} color 
-     * @returns {boolean}
-     */
-    function playerHasAnyLegalActions(color) {
-        return getAllLegalActions(color).length > 0;
-    }
-
-    /**
-     * Master function handling human click interactions on the chessboard.
-     * @param {number} r - Row index clicked.
-     * @param {number} c - Column index clicked.
-     */
+    /* =========================================================================
+     * HUMAN INPUT HANDLERS
+     * ========================================================================= */
     function handleSquareClick(r, c) {
-        if (isGameOver || isPaused) return; 
-        
-        // Ignore clicks if it's the AI's turn
-        if (gameMode === 'ai' && turn === aiColor) return; 
+        if (isGameOver || isPaused) return;
+        if (gameMode === 'ai' && turn === aiColor) return;
 
-        // 1. Spawning a Piece Logic
+        // 1. Spawning from shop
         if (selectedShopType) {
             let found = validSpawns.find(s => s.r === r && s.c === c);
             if (found) {
                 executeBuy(selectedShopType, r, c);
-            } else { 
-                // Cancel Shop Selection if clicking outside valid spawn
-                selectedShopType = null; 
-                validSpawns = []; 
-                render(); 
+            } else {
+                selectedShopType = null;
+                validSpawns = [];
+                render();
             }
             return;
         }
 
-        // 2. Executing a Piece Move Logic
+        // 2. Executing a selected move
         let targetMove = validMoves.find(m => m.r === r && m.c === c);
         if (targetMove) {
             executeMove(selectedSquare.r, selectedSquare.c, r, c);
             return;
         }
 
-        // 3. Selecting a Piece on the board
+        // 3. Selecting a piece
         let p = board[r][c];
-        if (p && p.color === turn) {
-            selectedSquare = {r, c}; 
-            selectedShopType = null; 
+        if (p && (p.color === turn || p.type === 's')) {
+            // Backstabber can be selected by either player
+            selectedSquare = {r, c};
+            selectedShopType = null;
             validSpawns = [];
             calculateMovesForSquare(r, c);
         } else {
-            // Deselect
-            selectedSquare = null; 
+            selectedSquare = null;
             validMoves = [];
         }
         render();
     }
 
-    /**
-     * Calculates valid moves specifically for the UI to display dots.
-     * @param {number} r - Row index.
-     * @param {number} c - Col index.
-     */
     function calculateMovesForSquare(r, c) {
         validMoves = [];
         let p = board[r][c];
-        
+        if (!p) return;
+
+        // Determine effective color for backstabbers
+        let effectiveColor = (p.type === 's') ? turn : p.color;
+        let overrideColor = (p.type === 's' && p.color !== turn) ? turn : undefined;
+
         let cost = PIECES[p.type].move;
-        if (p.type === 'p' && !p.hasMoved) cost = 0;
-        
-        // Check Affordability
+        if ((p.type === 'p' || p.type === 's') && !p.hasMoved) cost = 0;
         if (p.type !== 'k' && banks[turn] < cost) return;
 
-        let pseudo = getPseudoMoves(r, c, board);
-        
-        pseudo.forEach(m => {
-            // Check Promotion Affordability Logic
-            if (p.type === 'p' && (m.r === 0 || m.r === 7)) {
-                let simulatedBank = banks[turn] - cost;
-                if (board[m.r][m.c]) simulatedBank += PIECES[board[m.r][m.c].type].price; 
-                if (simulatedBank < 1.00) return; 
+        let pseudo = getPseudoMoves(r, c, board, overrideColor);
+
+        for (let m of pseudo) {
+            if ((p.type === 'p' || p.type === 's') && (m.r === 0 || m.r === 7)) {
+                let simBank = banks[turn] - cost;
+                if (board[m.r][m.c]) simBank += PIECES[board[m.r][m.c].type].price;
+                if (simBank < 1.00) continue;
             }
-            
             if (!moveLeavesKingInCheck(r, c, m.r, m.c, turn, board)) {
                 validMoves.push(m);
             }
-        });
+        }
+
+        // Add castling moves for king
+        if (p.type === 'k' && p.color === turn) {
+            let castleMoves = getCastlingMoves(turn, board);
+            for (let cm of castleMoves) {
+                if (!moveLeavesKingInCheck(r, c, cm.r, cm.c, turn, board)) {
+                    validMoves.push(cm);
+                }
+            }
+        }
     }
 
-    /**
-     * Handles human interaction with the Global Shop UI.
-     * @param {string} type - Piece character.
-     */
     function selectShopItem(type) {
-        if (isGameOver || isPaused) return; 
+        if (isGameOver || isPaused) return;
         if (gameMode === 'ai' && turn === aiColor) return;
-        
-        // Disallow if out of stock or out of money
         if (inventory[turn][type] <= 0 || banks[turn] < PIECES[type].price) return;
 
-        // Toggle selection off if already selected
         if (selectedShopType === type) {
-            selectedShopType = null; 
+            selectedShopType = null;
             validSpawns = [];
         } else {
-            // Set Selection
-            selectedShopType = type; 
-            selectedSquare = null; 
+            selectedShopType = type;
+            selectedSquare = null;
             validMoves = [];
             validSpawns = getSpawnSquares(type, turn);
         }
         render();
     }
 
-    /**
-     * Core Execution: Deducts funds and spawns a purchased piece onto the board.
-     * Ends the turn immediately.
-     */
+    /* =========================================================================
+     * MOVE & BUY EXECUTION
+     * ========================================================================= */
     function executeBuy(type, r, c) {
         let price = PIECES[type].price;
         banks[turn] -= price;
@@ -1698,37 +2044,22 @@
 
         const s = STRINGS[currentLang];
         let colorStr = turn === 'w' ? 'White' : 'Black';
+        log(s.buyLog.replace('{color}', colorStr).replace('{name}', getPieceName(type))
+            .replace('{coord}', getCoordName(r,c)).replace('{price}', price.toFixed(2)));
         
-        let pName = getPieceName(type);
-        let coordName = getCoordName(r,c);
-        let priceFormat = price.toFixed(2);
-        
-        log(s.buyLog
-            .replace('{color}', colorStr)
-            .replace('{name}', pName)
-            .replace('{coord}', coordName)
-            .replace('{price}', priceFormat)
-        );
-        
-        stallPlies = 0; // Buying resets stalemate counter
-        selectedShopType = null; 
+        lastDoublePawnMove = null; // Buying clears en passant
+        stallPlies = 0;
+        selectedShopType = null;
         validSpawns = [];
-        
         switchTurn();
     }
 
-    /**
-     * Core Execution: Deducts funds, handles captures, and physically moves a piece.
-     * Ends the turn, OR pauses to open Promotion UI if applicable.
-     */
     function executeMove(fr, fc, tr, tc) {
         let p = board[fr][fc];
         let victim = board[tr][tc];
         
-        // Calculate Cost
         let cost = PIECES[p.type].move;
-        if (p.type === 'p' && !p.hasMoved) cost = 0;
-
+        if ((p.type === 'p' || p.type === 's') && !p.hasMoved) cost = 0;
         banks[turn] -= cost;
         
         const s = STRINGS[currentLang];
@@ -1738,77 +2069,114 @@
         if (cost < 0) {
             log(s.moveKingLog.replace('{color}', colorStr));
         } else {
-            let logMsg = s.moveLog
-                .replace('{color}', colorStr)
-                .replace('{name}', getPieceName(p.type))
-                .replace('{coord}', getCoordName(tr,tc))
-                .replace('{price}', cost.toFixed(2));
-            log(logMsg);
+            log(s.moveLog.replace('{color}', colorStr).replace('{name}', getPieceName(p.type))
+                .replace('{coord}', getCoordName(tr,tc)).replace('{price}', cost.toFixed(2)));
         }
 
-        // Handle Capture & Graveyard
+        // Handle standard capture
         if (victim) {
             let bounty = PIECES[victim.type].price;
             banks[turn] += bounty;
-            
-            let bountyMsg = s.bountyLog
-                .replace('{name}', getPieceName(victim.type))
-                .replace('{price}', bounty.toFixed(2));
-            log(bountyMsg, 'log-alert');
-            
-            // Send to Grave
+            log(s.bountyLog.replace('{name}', getPieceName(victim.type)).replace('{price}', bounty.toFixed(2)), 'log-alert');
             graveyard.push({ color: victim.color, type: victim.type, turnsLeft: 3 });
-            stallPlies = 0; // Capture resets stalemate counter
+            stallPlies = 0;
         }
 
-        if (p.type === 'p') stallPlies = 0; // Pawn move resets stalemate counter
+        if (p.type === 'p' || p.type === 's') stallPlies = 0;
 
-        // Physical Move
+        // Reset en passant, then set if applicable
+        lastDoublePawnMove = null;
+
+        // Track double pawn move for en passant
+        if ((p.type === 'p' || p.type === 's') && Math.abs(tr - fr) === 2) {
+            lastDoublePawnMove = { r: tr, c: tc };
+        }
+
+        // Physical move
         board[tr][tc] = p;
         board[fr][fc] = null;
         p.hasMoved = true;
 
-        // Check Pawn Promotion Trigger
-        if (p.type === 'p' && (tr === 0 || tr === 7)) {
-            if (gameMode === 'ai' && turn === aiColor) {
-                // AI Promotion Logic (Auto-Queen, or Rook if Queen unavailable)
-                let choice = 'q';
-                if (inventory[aiColor]['q'] <= 0 && !graveyard.some(g=>g.color===aiColor&&g.type==='q')) {
-                    choice = 'r';
-                }
-                processPromotion(choice, tr, tc);
-            } else {
-                // Human Promotion UI
-                clearInterval(timerIntervalId); 
-                pendingPromo = { r: tr, c: tc };
-                openPromoUI();
-                return; 
+        // Backstabber: change ownership to current mover
+        if (p.type === 's') {
+            p.color = turn;
+        }
+
+        // En Passant Capture (diagonal pawn move to empty square)
+        if ((p.type === 'p' || p.type === 's') && fc !== tc && !victim) {
+            let epPawn = board[fr][tc];
+            if (epPawn) {
+                let bounty = PIECES[epPawn.type].price;
+                banks[turn] += bounty;
+                log(s.enPassantLog.replace('{color}', colorStr).replace('{name}', getPieceName(epPawn.type))
+                    .replace('{price}', bounty.toFixed(2)), 'log-alert');
+                graveyard.push({ color: epPawn.color, type: epPawn.type, turnsLeft: 3 });
+                board[fr][tc] = null;
+                stallPlies = 0;
             }
         }
 
-        // Finalize
-        selectedSquare = null; 
+        // Castling Execution
+        if (p.type === 'k' && Math.abs(tc - fc) === 2) {
+            if (tc === 6) {
+                // Kingside
+                let rook = board[fr][7];
+                board[fr][5] = rook;
+                board[fr][7] = null;
+                if (rook) rook.hasMoved = true;
+                log(s.castleKingside.replace('{color}', colorStr), 'log-alert');
+            } else if (tc === 2) {
+                // Queenside
+                let rook = board[fr][0];
+                board[fr][3] = rook;
+                board[fr][0] = null;
+                if (rook) rook.hasMoved = true;
+                log(s.castleQueenside.replace('{color}', colorStr), 'log-alert');
+            }
+        }
+
+        // Pawn/Backstabber Promotion
+        if ((p.type === 'p' || p.type === 's') && (tr === 0 || tr === 7)) {
+            if (gameMode === 'ai' && turn === aiColor) {
+                // AI auto-promotion
+                let promoOptions = customUnitsEnabled ? ['d','c','a','u'] : ['q','r','b','n'];
+                let choice = promoOptions[0];
+                for (let opt of promoOptions) {
+                    let stock = inventory[aiColor][opt] + graveyard.filter(g => g.color === aiColor && g.type === opt).length;
+                    if (stock > 0) { choice = opt; break; }
+                }
+                processPromotion(choice, tr, tc);
+            } else {
+                clearInterval(timerIntervalId);
+                pendingPromo = { r: tr, c: tc };
+                openPromoUI();
+                return;
+            }
+        }
+
+        selectedSquare = null;
         validMoves = [];
         switchTurn();
     }
 
-    /**
-     * Opens the visual modal allowing a user to select a promotion type.
-     */
+    /* =========================================================================
+     * PROMOTION SYSTEM
+     * ========================================================================= */
     function openPromoUI() {
         const overlay = document.getElementById('promo-overlay');
         const box = document.getElementById('promo-options');
         box.innerHTML = '';
         overlay.style.display = 'flex';
 
-        // Display options if player has them in stock OR graveyard
-        ['q', 'r', 'b', 'n'].forEach(t => {
+        let promoTypes = customUnitsEnabled ? ['d', 'c', 'a', 'u'] : ['q', 'r', 'b', 'n'];
+
+        promoTypes.forEach(t => {
             let stock = inventory[turn][t] + graveyard.filter(g => g.color === turn && g.type === t).length;
-            
             if (stock > 0) {
                 let btn = document.createElement('button');
                 btn.className = `promo-choice piece-${turn}`;
                 btn.innerText = PIECES[t].sym;
+                btn.title = getPieceName(t);
                 btn.onclick = () => {
                     overlay.style.display = 'none';
                     processPromotion(t, pendingPromo.r, pendingPromo.c);
@@ -1818,17 +2186,12 @@
         });
     }
 
-    /**
-     * Finalizes pawn promotion, processes the $1.00 fee, and resolves inventory.
-     */
     function processPromotion(type, r, c) {
-        // Promotion Costs $1.00
-        banks[turn] -= 1.00; 
+        banks[turn] -= 1.00;
         
         const s = STRINGS[currentLang];
         log(s.promoLog.replace('{color}', turn.toUpperCase()).replace('{name}', getPieceName(type)), 'log-alert');
 
-        // Deduct from inventory or steal from graveyard
         if (inventory[turn][type] > 0) {
             inventory[turn][type]--;
         } else {
@@ -1836,204 +2199,25 @@
             if (idx > -1) graveyard.splice(idx, 1);
         }
 
-        // Apply morph
         board[r][c] = { color: turn, type: type, hasMoved: true };
         
-        // Reset state
-        pendingPromo = null; 
-        selectedSquare = null; 
+        pendingPromo = null;
+        selectedSquare = null;
         validMoves = [];
         switchTurn();
     }
 
-    /**
-     * Calculates physical movement trajectories according to standard Chess rules, 
-     * ignoring King Safety.
-     * @param {number} r 
-     * @param {number} c 
-     * @param {Array} b - The board reference.
-     * @returns {Array} List of {r, c} objects.
-     */
-    function getPseudoMoves(r, c, b) {
-        let p = b[r][c];
-        let list = [];
-        let side = p.color === 'w' ? -1 : 1; // White moves up (-1), Black down (+1)
-
-        /** Helper */
-        let pushSafe = (tr, tc) => {
-            if (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
-                if (!b[tr][tc]) { 
-                    list.push({r: tr, c: tc}); 
-                    return true; 
-                }
-                if (b[tr][tc].color !== p.color) { 
-                    list.push({r: tr, c: tc}); 
-                }
-            }
-            return false;
-        };
-
-        if (p.type === 'p') {
-            // Forward Movement
-            if (r + side >= 0 && r + side < 8 && !b[r+side][c]) {
-                list.push({r: r+side, c});
-                // Double Jump
-                if (!p.hasMoved && !b[r + side*2][c]) {
-                    list.push({r: r + side*2, c});
-                }
-            }
-            // Capture Diagonal Left
-            if (c - 1 >= 0 && b[r+side][c-1] && b[r+side][c-1].color !== p.color) {
-                list.push({r: r+side, c: c-1});
-            }
-            // Capture Diagonal Right
-            if (c + 1 < 8 && b[r+side][c+1] && b[r+side][c+1].color !== p.color) {
-                list.push({r: r+side, c: c+1});
-            }
-        }
-        else if (p.type === 'n') {
-            let jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-            jumps.forEach(j => pushSafe(r+j[0], c+j[1]));
-        }
-        else if (p.type === 'b' || p.type === 'r' || p.type === 'q') {
-            let vectors = [];
-            // Straight lines for Rook and Queen
-            if (p.type !== 'b') vectors.push([-1,0], [1,0], [0,-1], [0,1]);
-            // Diagonals for Bishop and Queen
-            if (p.type !== 'r') vectors.push([-1,-1], [-1,1], [1,-1], [1,1]);
-            
-            vectors.forEach(v => {
-                let tr = r + v[0], tc = c + v[1];
-                while (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
-                    if (!b[tr][tc]) { 
-                        list.push({r: tr, c: tc}); 
-                    } else {
-                        if (b[tr][tc].color !== p.color) {
-                            list.push({r: tr, c: tc});
-                        }
-                        break; // Blocked by piece
-                    }
-                    tr += v[0]; 
-                    tc += v[1];
-                }
-            });
-        }
-        else if (p.type === 'k') {
-            let steps = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-            steps.forEach(s => pushSafe(r+s[0], c+s[1]));
-        }
-        return list;
-    }
-
-    /**
-     * Determines valid spawn locations for newly bought pieces.
-     * @param {string} type - Piece character.
-     * @param {string} color - Player color.
-     * @returns {Array} List of {r, c} objects.
-     */
-    function getSpawnSquares(type, color) {
-        let homeRank = color === 'w' ? 7 : 0;
-        let pawnRank = color === 'w' ? 6 : 1;
-        let raw = [];
-
-        if (type === 'p') { 
-            for(let i=0; i<8; i++) raw.push({r: pawnRank, c: i}); 
-        } else if (type === 'r') {
-            raw.push({r: homeRank, c: 0}, {r: homeRank, c: 7});
-        } else if (type === 'n') {
-            raw.push({r: homeRank, c: 1}, {r: homeRank, c: 6});
-        } else if (type === 'b') {
-            raw.push({r: homeRank, c: 2}, {r: homeRank, c: 5});
-        } else if (type === 'q') {
-            raw.push({r: homeRank, c: 3}); // Queens generally spawn on D-file
-        }
-
-        // Filter out squares that are occupied or leave King in check
-        return raw.filter(s => !board[s.r][s.c] && !buyLeavesKingInCheck(type, s.r, s.c, color, board));
-    }
-
-    /**
-     * Scans the board to determine if the specified color's King is under attack.
-     */
-    function isKingInCheck(color, b) {
-        let kr = -1, kc = -1;
-        
-        // Find the King
-        for (let r=0; r<8; r++) {
-            for (let c=0; c<8; c++) {
-                if (b[r][c] && b[r][c].type === 'k' && b[r][c].color === color) { 
-                    kr = r; 
-                    kc = c; 
-                    break; 
-                }
-            }
-        }
-        
-        if (kr === -1) return false; // Fail safe
-        
-        // Check if attacked
-        return isSquareAttackedBy(color === 'w' ? 'b' : 'w', kr, kc, b);
-    }
-
-    /**
-     * Validates if a specific coordinate is within the attack range of enemy pieces.
-     */
-    function isSquareAttackedBy(attackerColor, tr, tc, b) {
-        for (let r=0; r<8; r++) {
-            for (let c=0; c<8; c++) {
-                if (b[r][c] && b[r][c].color === attackerColor) {
-                    let moves = getPseudoMoves(r, c, b);
-                    if (moves.some(m => m.r === tr && m.c === tc)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Mental Sandbox: Verifies if a move violates the "Cannot put King in check" rule.
-     */
-    function moveLeavesKingInCheck(fr, fc, tr, tc, color, b) {
-        let nextB = b.map(row => [...row]); // Deep copy
-        
-        nextB[tr][tc] = nextB[fr][fc];
-        nextB[fr][fc] = null;
-        
-        return isKingInCheck(color, nextB);
-    }
-
-    /**
-     * Mental Sandbox: Verifies if a spawn purchase leaves King in check.
-     */
-    function buyLeavesKingInCheck(type, tr, tc, color, b) {
-        let nextB = b.map(row => [...row]); // Deep copy
-        
-        nextB[tr][tc] = { color: color, type: type, hasMoved: false };
-        
-        return isKingInCheck(color, nextB);
-    }
-
-    /**
-     * =========================================================================
-     * UI RENDERING SUBSYSTEM
-     * =========================================================================
-     */
-
-    /**
-     * Master render function. Calls specific segment renders.
-     */
+    /* =========================================================================
+     * UI RENDERING
+     * ========================================================================= */
     function render() {
         renderBoard();
         renderShop();
         renderGraveyard();
 
-        // Update Bank Text
         document.getElementById('bank-w').innerText = `$${banks.w.toFixed(2)}`;
         document.getElementById('bank-b').innerText = `$${banks.b.toFixed(2)}`;
         
-        // Update Turn UI Indicator
         let label = document.getElementById('turn-display');
         const s = STRINGS[currentLang];
         
@@ -2048,8 +2232,7 @@
             label.style.color = '#ff9f40';
         } else {
             if (gameMode === 'local') {
-                let isP1 = turn === humanColor;
-                label.innerText = isP1 ? s.turnP1 : s.turnP2;
+                label.innerText = turn === humanColor ? s.turnP1 : s.turnP2;
             } else {
                 label.innerText = s.turnYou;
             }
@@ -2057,49 +2240,50 @@
         }
     }
 
-    /**
-     * Renders the 8x8 Grid, handling board rotation based on human color perspective.
-     */
     function renderBoard() {
         const area = document.getElementById('board');
         area.innerHTML = '';
 
-        let rowOrder = [];
-        let colOrder = [];
-        
-        // Orientation Matrix
+        let rowOrder = [], colOrder = [];
         if (humanColor === 'b') {
-            for (let r=7; r>=0; r--) rowOrder.push(r);
-            for (let c=7; c>=0; c--) colOrder.push(c); 
+            for (let r = 7; r >= 0; r--) rowOrder.push(r);
+            for (let c = 7; c >= 0; c--) colOrder.push(c);
         } else {
-            for (let r=0; r<8; r++) rowOrder.push(r);
-            for (let c=0; c<8; c++) colOrder.push(c);  
+            for (let r = 0; r < 8; r++) rowOrder.push(r);
+            for (let c = 0; c < 8; c++) colOrder.push(c);
         }
 
-        // Draw Divs
         for (let r of rowOrder) {
             for (let c of colOrder) {
                 let sq = document.createElement('div');
                 sq.className = `square ${(r+c)%2 === 0 ? 'light' : 'dark'}`;
 
-                // Inject Piece
                 let p = board[r][c];
                 if (p) {
                     sq.innerText = PIECES[p.type].sym;
-                    sq.classList.add(p.color === 'w' ? 'piece-w' : 'piece-b');
+                    if (p.type === 's') {
+                        sq.classList.add('piece-backstabber');
+                    } else {
+                        sq.classList.add(p.color === 'w' ? 'piece-w' : 'piece-b');
+                    }
                 }
 
-                // Highlight Selected Square
                 if (selectedSquare && selectedSquare.r === r && selectedSquare.c === c) {
                     sq.classList.add('selected');
                 }
-                
-                // Highlight Valid Moves
-                if (validMoves.some(m => m.r === r && m.c === c)) {
-                    sq.classList.add(board[r][c] ? 'valid-capture' : 'valid-move');
+
+                // Valid move / capture / en passant indicators
+                let moveMatch = validMoves.find(m => m.r === r && m.c === c);
+                if (moveMatch) {
+                    if (moveMatch.enPassant) {
+                        sq.classList.add('valid-ep');
+                    } else if (board[r][c]) {
+                        sq.classList.add('valid-capture');
+                    } else {
+                        sq.classList.add('valid-move');
+                    }
                 }
 
-                // Highlight Valid Spawn Squares
                 if (selectedShopType && validSpawns.some(s => s.r === r && s.c === c)) {
                     sq.classList.add('valid-spawn');
                 }
@@ -2110,15 +2294,15 @@
         }
     }
 
-    /**
-     * Generates shop cards dynamically based on current inventory and wealth.
-     */
     function renderShop() {
         const grid = document.getElementById('shop-items');
         grid.innerHTML = '';
 
-        ['p', 'n', 'b', 'r', 'q'].forEach(t => {
+        let shopTypes = customUnitsEnabled ? ['s','u','a','c','d'] : ['p','n','b','r','q'];
+
+        shopTypes.forEach(t => {
             let stock = inventory[turn][t];
+            if (stock === undefined) stock = 0;
             let price = PIECES[t].price;
             let canAfford = banks[turn] >= price;
             let disabled = stock === 0 || !canAfford;
@@ -2140,20 +2324,14 @@
                 </div>
             `;
             
-            if (!disabled) {
-                card.onclick = () => selectShopItem(t);
-            }
+            if (!disabled) card.onclick = () => selectShopItem(t);
             grid.appendChild(card);
         });
     }
 
-    /**
-     * Generates visual representations of pieces currently in cooldown.
-     */
     function renderGraveyard() {
         const container = document.getElementById('graveyard-list');
         container.innerHTML = '';
-        
         graveyard.forEach(item => {
             let d = document.createElement('div');
             d.className = `grave-unit piece-${item.color}`;
@@ -2163,11 +2341,9 @@
         });
     }
 
-    /**
-     * Console equivalent UI logging system.
-     * @param {string} msg - Message to display.
-     * @param {string} styleClass - Optional CSS class for highlighting.
-     */
+    /* =========================================================================
+     * UTILITY FUNCTIONS
+     * ========================================================================= */
     function log(msg, styleClass = '') {
         const box = document.getElementById('log-box');
         let div = document.createElement('div');
@@ -2176,28 +2352,20 @@
         box.prepend(div);
     }
 
-    /**
-     * Translates coordinates to Algebraic Chess Notation (e.g. e4).
-     */
     function getCoordName(r, c) { 
         return `${String.fromCharCode(97 + c)}${8 - r}`; 
     }
 
-    /**
-     * Triggers Game Over overlay and stops timers.
-     */
     function endGame(titleText, reasonText) {
         isGameOver = true;
         clearInterval(timerIntervalId);
-        
         document.getElementById('game-over-title').innerText = titleText;
         document.getElementById('game-over-reason').innerText = reasonText;
         document.getElementById('game-over-overlay').style.display = 'flex';
-        
         log(`GAME OVER: ${titleText} - ${reasonText}`, 'log-alert');
     }
 
-    // Initialize application logic
+    // Boot
     setLanguage('id');
 
 </script>
